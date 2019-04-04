@@ -8,6 +8,11 @@ import (
 	"sync/atomic"
 )
 
+type backendRequest struct {
+	Backends []Backend
+	Response chan struct{}
+}
+
 // Router serves as consumer interface.
 type Router struct {
 	nextGID  uint64
@@ -15,8 +20,8 @@ type Router struct {
 
 	chStatus      chan chan string
 	chLog         chan Entry
-	chAddBackends chan []Backend
-	chSetBackends chan []Backend
+	chAddBackends chan backendRequest
+	chSetBackends chan backendRequest
 	chClose       chan int
 	waitGroup     sync.WaitGroup
 }
@@ -28,8 +33,8 @@ func New() *Router {
 
 		chStatus:      make(chan chan string),
 		chLog:         make(chan Entry),
-		chAddBackends: make(chan []Backend),
-		chSetBackends: make(chan []Backend),
+		chAddBackends: make(chan backendRequest),
+		chSetBackends: make(chan backendRequest),
 		chClose:       make(chan int),
 	}
 
@@ -52,17 +57,19 @@ func (router *Router) run() {
 			close(router.chClose)
 			return
 
-		case out := <-router.chStatus:
-			out <- router.status()
+		case backendReq := <-router.chAddBackends:
+			router.backends = append(router.backends, backendReq.Backends...)
+			backendReq.Response <- struct{}{}
+
+		case backendReq := <-router.chSetBackends:
+			router.backends = backendReq.Backends
+			backendReq.Response <- struct{}{}
 
 		case entry := <-router.chLog:
 			router.Log(entry)
 
-		case backends := <-router.chAddBackends:
-			router.backends = append(router.backends, backends...)
-
-		case backends := <-router.chSetBackends:
-			router.backends = backends
+		case out := <-router.chStatus:
+			out <- router.status()
 		}
 	}
 }
@@ -124,13 +131,23 @@ func (router *Router) Log(entry Entry) {
 
 // AddBackends adds the given backends to this router.
 func (router *Router) AddBackends(backends ...Backend) {
-	router.chAddBackends <- backends
+	chResponse := make(chan struct{})
+	router.chAddBackends <- backendRequest{
+		Backends: backends,
+		Response: chResponse,
+	}
+	<-chResponse
 }
 
 // SetBackends sets the given backends for this router, removing all previously
 // add backends.
 func (router *Router) SetBackends(backends ...Backend) {
-	router.chSetBackends <- backends
+	chResponse := make(chan struct{})
+	router.chSetBackends <- backendRequest{
+		Backends: backends,
+		Response: chResponse,
+	}
+	<-chResponse
 }
 
 // NewLogger returns a new logging interface for this router.

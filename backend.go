@@ -18,11 +18,6 @@ type BaseBackend struct {
 	levels LevelSet
 }
 
-func (baseBackend BaseBackend) wants(entry Entry) bool {
-	_, ok := baseBackend.levels[entry.Level()]
-	return ok == true
-}
-
 // Format returns the format string of this backend.
 func (baseBackend BaseBackend) Format() string {
 	return baseBackend.format
@@ -69,6 +64,10 @@ func (baseBackend *BaseBackend) RemoveLevels(levels ...Level) {
 
 // Wants returns true if the given Entry is logged by this backend.
 func (baseBackend BaseBackend) Wants(entry Entry) bool {
+	return baseBackend.wants(entry)
+}
+
+func (baseBackend BaseBackend) wants(entry Entry) bool {
 	_, ok := baseBackend.levels[entry.Level()]
 	return ok == true
 }
