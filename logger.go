@@ -13,6 +13,7 @@ import (
 type Logger interface {
 	Router() *Router
 	Name() string
+	NewLogger(name string) Logger
 	Debug(...interface{})
 	Debugf(string, ...interface{})
 	Info(...interface{})
