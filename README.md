@@ -1,5 +1,6 @@
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![GoDoc](https://godoc.org/github.com/octogo/logrouter?status.svg)](https://godoc.org/github.com/octogo/log)
+[![Build Status](https://travis-ci.org/octogo/logrouter.svg?branch=master)](https://travis-ci.org/octogo/log) 
 
 # OctoLog
 
@@ -27,7 +28,7 @@ go get -u github.com/octogo/log
 ```go
 package main
 
-import "github.com/octogo/octolog"
+import "github.com/octogo/log"
 
 func main() {
     router := octolog.New() // Initialize new router
@@ -39,7 +40,7 @@ func main() {
 ```
 
 *For more examples see the
-[examples directory](https://github.com/octogo/octolog/blob/master/examples).*
+[examples directory](https://github.com/octogo/log/blob/master/examples).*
 
 ----
 
@@ -49,7 +50,7 @@ Using *octolog* in your Go project is easy.
 To get started, simply import it.
 
 ```go
-import "github.com/octogo/octolog"
+import "github.com/octogo/log"
 ```
 
 Now you can control the default configuration values.
