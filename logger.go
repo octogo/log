@@ -71,7 +71,8 @@ func (logger *l) log(level Level, format string, args ...interface{}) {
 			Line: line,
 			Func: caller,
 		},
-		args: args,
+		args:       args,
+		formatTmpl: format,
 	}
 
 	logger.router.Log(entry)
