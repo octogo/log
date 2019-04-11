@@ -5,14 +5,18 @@ import (
 )
 
 func main() {
-	router := octolog.New()
-	defer router.Drain()
+	defer log.Close()
 
-	logger := router.NewLogger("example")
+	log.Println("output")
+	log.Printf("formatted %s", "output")
+
+	logger := log.NewLogger("main")
 	logger.Debug("debug")
 	logger.Info("info")
 	logger.Notice("notice")
 	logger.Alert("alert")
 	logger.Warning("warning")
 	logger.Error("error")
+
+	log.Fatalf("formatted %s", "error")
 }

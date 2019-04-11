@@ -1,11 +1,9 @@
-package octolog
+package log
 
 var (
-	// DefaultLoggerName defines the default name for all loggers.
-	DefaultLoggerName = "octolog"
+	// DefaultLogFormat defines a very basic default log format.
+	DefaultLogFormat = "{{.Msg}}"
 
-	// DefaultLogFormat defines a basic default format.
-	DefaultLogFormat = "{{.Date}} {{.TimeExact}} [{{.PID}}]:{{.GID}} {{.Logger}}:{{.LID}} {{.Level}} ▶ {{.Body}}"
-
-	defaultInternalLogFormat = "{{.Body}}"
+	// DebugLogFormat defines a more verbose default format.
+	DebugLogFormat = "{{.Date}} {{.TimeExact}} [{{.PID}}]:{{.GID}} {{.Logger}}:{{.LID}} |{{.Level}}| {{.Msg}}"
 )

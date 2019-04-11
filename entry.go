@@ -1,4 +1,4 @@
-package octolog
+package log
 
 import (
 	"bytes"
@@ -31,7 +31,7 @@ type Entry interface {
 	Date() string               // Date in the format of YYYY-MM-DD
 	Time() string               // Time in the format of HH:mm:ss
 	TimeExact() string          // Time in the format of HH:mm:ss.S
-	Body() string               // Actual message to log
+	Msg() string                // Actual message to log
 	Color() string              // ANSII color escape sequence
 	ColorReset() string         // ANSII color reset escape sequence
 }
@@ -160,8 +160,8 @@ func (entry E) TimeExact() string {
 	return entry.timestamp.Format("15:04:05.000")
 }
 
-// Body returns the actual message to log.
-func (entry E) Body() string {
+// Msg returns the actual message to log.
+func (entry E) Msg() string {
 	args := entry.args
 	for i, arg := range args {
 		if redactor, ok := arg.(Redactor); ok == true {

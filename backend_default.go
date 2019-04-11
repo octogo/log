@@ -1,24 +1,10 @@
-package octolog
+package log
 
 // DefaultBackends returns the default backends.
 func DefaultBackends() []Backend {
 	format := DefaultLogFormat
-
-	backendOut, err := NewStdoutBackend(
-		format,
-		LevelSlice{DEBUG, INFO, NOTICE},
-	)
-	if err != nil {
-		panic(err)
+	return []Backend{
+		NewStdoutBackend(format, LevelSlice{DEBUG, INFO, NOTICE}),
+		NewStderrBackend(format, LevelSlice{ALERT, WARNING, ERROR}),
 	}
-
-	backendErr, err := NewStderrBackend(
-		format,
-		LevelSlice{ERROR, WARNING, ALERT},
-	)
-	if err != nil {
-		panic(err)
-	}
-
-	return []Backend{backendOut, backendErr}
 }

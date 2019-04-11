@@ -1,4 +1,4 @@
-package octolog
+package log
 
 import "log/syslog"
 
@@ -9,10 +9,10 @@ type SyslogBackend struct {
 }
 
 // NewSyslogBackend returns a newly initialized SyslogBackend.
-func NewSyslogBackend(format string, levels LevelSlice, priority syslog.Priority, tag string) (*SyslogBackend, error) {
+func NewSyslogBackend(format string, levels LevelSlice, priority syslog.Priority, tag string) *SyslogBackend {
 	writer, err := syslog.New(priority, tag)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 
 	return &SyslogBackend{
@@ -21,7 +21,7 @@ func NewSyslogBackend(format string, levels LevelSlice, priority syslog.Priority
 			levels: levelSliceToSet(levels),
 		},
 		writer: writer,
-	}, nil
+	}
 }
 
 // Log takes a Record and logs it to syslog.

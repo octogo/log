@@ -1,4 +1,4 @@
-package octolog
+package log
 
 import "os"
 

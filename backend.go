@@ -1,4 +1,4 @@
-package octolog
+package log
 
 // Backend defines the interface for a logging backend.
 type Backend interface {

@@ -12,4 +12,4 @@ It is thread-safe and can be used from many different go-routines at once.
 			logger.Info("Hello world!")
 	}
 */
-package octolog
+package log

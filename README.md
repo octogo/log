@@ -31,11 +31,10 @@ package main
 import "github.com/octogo/log"
 
 func main() {
-    router := octolog.New() // Initialize new router
-    defer router.Drain()    // Drain all queued logs before terminating
+    defer log.Close()   // Drain all queued logs before terminating
 
-    logger := router.NewLogger("example") // Initialize new logger
-    logger.Info("Hello world!")           // Log "Hello World!"
+    log.Println("Hello world!")
+    log.Fatal("bye")
 }
 ```
 
@@ -53,41 +52,24 @@ To get started, simply import it.
 import "github.com/octogo/log"
 ```
 
-Now you can control the default configuration values.
+## Logging
 
-Remove all metadata fields from log-lines like this:
-
-```go
-func main() {
-    octolog.DefaultLogFormat = "{{.Body}}"
-}
-```
-
-### The Router
-
-Next, you can obtain a new *Router*.
-The router is the core unit or engine of *octolog*.
-It essentiall spawns a dedicated go-routine for logging and provides
-methods for interfacing with it, such as:
-
-- managing backends
-- spawning new loggers
-- routing entries from the loggers to the backends
+Simple logging is accomplished by using the `Println()`, `Printf()`, `Fatal()` and
+`Fatalf()` functions.
 
 ```go
 func main() {
-    router := octolog.New()
-    defer router.Drain()
+    defer log.Close()
+
+    log.Printf("Hello %s!", "world")
+    log.Fatalf("kthx%s", "bye")
 }
 ```
-
-Use the `New()` function to obtain a newly initialized router.
-Always remember to defer the `Drain()` method to ensure that all
-entries are logged before the main go-routine exists.
 
 ### The Backends
 
-By default the router will spawn with two FileBackends:
+By default library will spawn with a default logger configured with two
+FileBackends:
 
 - `os.Stdout` - logs levels `DEBUG`, `INFO` and `NOTICE`
 - `os.Stderr` - logs levels `ALERT`, `WARNING` and `ERROR`
@@ -100,17 +82,24 @@ dedicated log-file is easy:
 
 ```go
 func main() {
+    defer log.Close()
+
+    logFile, err := os.OpenFile("out.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+    if err != nil {
+        log.Fatal(err)
+    }
+
     fileBackend, err := octolog.NewFileBackend(
         format: octolog.DefaultLogFormat,
         levels: octolog.AllLevelSlice(),
-        file: *os.File, // Replace with an actual *os.File value
+        file: logFile,
         colorOutput: false,
     )
     if err != nil {
-        panic(err)
+        log.Fatal(err)
     }
 
-    router.AddBackends(fileBackend)
+    log.AddBackends(fileBackend)
 }
 ```
 
@@ -119,33 +108,38 @@ not overwrite the default backends like `SetBackends()` would do.
 
 ### The Loggers
 
-Once all backends have been set up, logs can be written in a variety
-of different levels using a `Logger`.
+For more fine-grained logging and increasing the overall readability of log-traces,
+it is possible to instantiate an arbitrary number of loggers. A logger is 
 
 ```go
 func main() {
-    logger := router.NewLogger(name: "tutorial")
-
+    logger := log.NewLogger(name: "tutorial")
     logger.Debug("debug")
     logger.Info("info")
     logger.Notice("notice")
     logger.Alert("alert")
     logger.Warning("warning")
     logger.Error("error")
+
+    childLogger := logger.NewLogger("child")
+    childLogger.Debug("debug")
+    childLogger.Info("info")
+    childLogger.Notice("notice")
+    childLogger.Alert("alert")
+    childLogger.Warning("warning")
+    childLogger.Error("error")
 }
 ```
 
 There is also an equivalent formatter method for each of the above:
 
 ```go
-func main() {
     logger.Debugf("Debug: %s", "debug")
     logger.Infof("Info: %s", "info")
     logger.Noticef("Notice: %s", "notice")
     logger.Alertf("Alert: %s", "alert")
     logger.Warningf("Warning: %s", "warning")
     logger.Errorf("Error: %s", "error")
-}
 ```
 
 ----

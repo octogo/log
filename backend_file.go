@@ -1,4 +1,4 @@
-package octolog
+package log
 
 import (
 	"os"
@@ -15,9 +15,9 @@ type FileBackend struct {
 }
 
 // NewFileBackend returns a newly initialized FileBackend
-func NewFileBackend(format string, levels LevelSlice, file *os.File, colorOutput bool) (*FileBackend, error) {
+func NewFileBackend(format string, levels LevelSlice, file *os.File, colorOutput bool) *FileBackend {
 	if file == nil {
-		return nil, errors.New("file can not be nil")
+		panic(errors.New("file can not be nil"))
 	}
 
 	return &FileBackend{
@@ -27,7 +27,7 @@ func NewFileBackend(format string, levels LevelSlice, file *os.File, colorOutput
 		},
 		file:        file,
 		colorOutput: colorOutput,
-	}, nil
+	}
 }
 
 // isTerminal returns a bool indicating if the log-file is a TTY.
