@@ -33,8 +33,8 @@ import "github.com/octogo/log"
 func main() {
     defer log.Close()   // Drain all queued logs before terminating
 
-    log.Println("Hello world!")
-    log.Fatal("bye")
+    log.Println("Hello world!")  // goes to stdout
+    log.Fatal("bye")             // goes to stderr
 }
 ```
 
