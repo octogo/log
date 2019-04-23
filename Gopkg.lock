@@ -15,18 +15,18 @@
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
   pruneopts = "UT"
-  revision = "8e1b8d32e692162a446e97250c5d34f5a52efed6"
+  revision = "d864b10871cd4370fe574816b489c819c675ccc7"
 
 [[projects]]
   branch = "master"
-  digest = "1:913c195027e7f4a5773d571e6a56af3a1dd66c06447ba8e2dd9ffa4dfcab47d3"
+  digest = "1:0b1c39a5f01b898239cc5c6ee20c6535cb2621685206a371d4a489477d75511b"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "81d4e9dc473e5e8c933f2aaeba2a3d81efb9aed2"
+  revision = "953cdadca894cdc07be76fc99f95b40c28f06623"
 
 [solve-meta]
   analyzer-name = "dep"
