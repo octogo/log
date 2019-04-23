@@ -69,7 +69,7 @@ func main() {
 
 ### The Backends
 
-By default thw library will spawn with two default backends:
+By default the library will spawn with two default backends:
 
 - `os.Stdout` - logs levels `DEBUG`, `INFO` and `NOTICE`
 - `os.Stderr` - logs levels `ALERT`, `WARNING` and `ERROR`
