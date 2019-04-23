@@ -10,6 +10,7 @@ OctoLog is a very thin and flexible asynchronous logging library for Golang.
 
 **Features:**
 
+- [x] asychronous logging from multiple goroutines
 - [x] logging to arbitrary files, to syslog, to custom backends
 - [x] custom log formats
 - [x] support for backend reconfiguration during run-time
@@ -68,17 +69,16 @@ func main() {
 
 ### The Backends
 
-By default library will spawn with a default logger configured with two
-FileBackends:
+By default thw library will spawn with two default backends:
 
 - `os.Stdout` - logs levels `DEBUG`, `INFO` and `NOTICE`
 - `os.Stderr` - logs levels `ALERT`, `WARNING` and `ERROR`
 
-Use the router's `SetBackends()` and `AddBackends()` methods to
-reconfigure the backends to your needs.
+Use the `SetBackends()` and `AddBackends()` methods to reconfigure the backends
+to your needs.
 
 Adding a `FileBackend` that will additionally log all entries to a
-dedicated log-file is easy:
+dedicated logfile is easy:
 
 ```go
 func main() {
@@ -108,8 +108,10 @@ not overwrite the default backends like `SetBackends()` would do.
 
 ### The Loggers
 
-For more fine-grained logging and increasing the overall readability of log-traces,
-it is possible to instantiate an arbitrary number of loggers. A logger is 
+For more fine-grained logging and increasing the overall readability of
+log-traces, it is possible to instantiate an arbitrary number of loggers.
+A logger is an interface of which many can exist in separate goroutines at
+the same time.
 
 ```go
 func main() {
@@ -131,7 +133,7 @@ func main() {
 }
 ```
 
-There is also an equivalent formatter method for each of the above:
+There is also an equivalent formatted method for each of the above:
 
 ```go
     logger.Debugf("Debug: %s", "debug")
@@ -149,13 +151,11 @@ There is also an equivalent formatter method for each of the above:
 The supported log-levels and their intended uses are:
 
 - **ERROR** - fatal condition
-- **WARNING** - fatal condition approaching
+- **WARNING** - fatal condition closing in
 - **ALERT** - heads-up alert
-- **NOTICE** - heads-up
-- **INFO** - plain output
+- **NOTICE** - heads-up notice
+- **INFO** - informational output
 - **DEBUG** - debug information
-
-Additional log-levels may be introduced
 
 ### Formatting
 
