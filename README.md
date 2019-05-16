@@ -179,6 +179,6 @@ following fields:
 - **{{.Date}}** - the date of the log (2006-01-02)
 - **{{.Time}}** - the timestamp of the log (15:05:06)
 - **{{.TimeExact}}** - the timestamp of the log (15:05:06.000)
-- **{{.Body}}** - the actual log message
+- **{{.Msg}}** - the actual log message
 
 ----
