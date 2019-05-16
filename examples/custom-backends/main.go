@@ -6,6 +6,15 @@ import (
 	"github.com/octogo/log"
 )
 
+type a struct {
+	Name string
+	Age  int
+}
+
+type b struct {
+	*a
+}
+
 func main() {
 	defer log.Close()
 
@@ -15,7 +24,7 @@ func main() {
 	var fileName = "out.log"
 	var logFile *os.File
 
-	logFile, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+	logFile, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {
 		log.Fatal(err)
 	}
