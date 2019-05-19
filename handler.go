@@ -80,7 +80,7 @@ func AddBackends(b ...Backend) {
 	chBackends <- append(<-chBackends, b...)
 }
 
-// Printf logs the given formatted interfaces as INFO.
+// Printf logs the given interfaces as formatted INFO.
 func Printf(format string, v ...interface{}) {
 	mainLogger.Infof(format, v...)
 }
@@ -88,6 +88,16 @@ func Printf(format string, v ...interface{}) {
 // Println logs the given interfaces as INFO.
 func Println(v ...interface{}) {
 	mainLogger.Info(v...)
+}
+
+// Error logs the given interface as ERROR.
+func Error(v interface{}) {
+	mainLogger.Error(v)
+}
+
+// Errorf logs the given interface as formatted ERROR.
+func Errorf(format string, v interface{}) {
+	mainLogger.Errorf(format, v)
 }
 
 // Fatal logs the given interfaces as ERROR and exists and exists non-zero.
