@@ -4,7 +4,8 @@
 
 # OctoLog
 
-OctoLog is a very thin and flexible asynchronous logging library for Golang.
+Package `log` is a very thin and flexible asynchronous logging library for Golang.
+It is thread-safe and can be used from many different goroutines simultaneously.
 
 ----
 
