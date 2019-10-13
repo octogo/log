@@ -1,73 +1,13 @@
-# OctoLog
+package config
 
-*Octolog* is a drop-in replacement for Go's built-in *log* package.
+import (
+	"bytes"
+	"os"
+	"time"
+)
 
-----
-
-## Features
-
-- logging in and filtering by log-levels
-- colors *(that are automatically disabled when the output is not a
-  terminal)*
-- out-of-the-box routing of errors and warnings to STDERR
-- customizable outputs & loggers
-- out-of-the-box support for concurrent use
-
-----
-
-## Quickstart
-
-```go
-import "github.com/octogo/log"
-
-func main() {
-    log.Init()
-    log.Println("Hello world!")
-    log.Fatal("FATALITY")
-}
-```
-
-```stdout
-2019/10/13 04:02:19 main Hello world!
-2019/10/13 04:02:19 main FATALITY
-exit status 1
-```
-
-Using a *Logger* it is possible to log in various levels.
-
-```go
-func main() {
-    log.Init()
-    logger := log.New(
-        "myapp", // unique name of logger
-        nil,        // nil implies all
-    )
-    logger.Debug("Debug message...")
-    logger.Info("Info...")
-    logger.Notice("Notification...")
-    logger.Warning("Warning...")
-    logger.Error("Error...")
-}
-```
-
-```stdout
-2019/10/13 04:09:33 myapp Debug message...
-2019/10/13 04:09:33 myapp Info...
-2019/10/13 04:09:33 myapp Notification...
-2019/10/13 04:09:33 myapp Warning...
-2019/10/13 04:09:33 myapp Error...
-```
-
-----
-
-## Configuration
-
-*Octolog* can be configured with a simple *YAML* file that is placed
-in the current working directory.
-
-**Example:** `logging.yml`
-
-```yaml
+// SampleConfig holds the sample configuration file.
+var SampleConfig = `
 # rootlogger defines the name of the standard logger
 # default: main
 rootlogger: 'main'
@@ -92,7 +32,7 @@ rootlogger: 'main'
 # {{.Line}}   - the line in the above source file
 #
 # default: '{{.Date}} {{.Time}} {{.Level}} {{.Message}}'
-defaultformat: '{{.Date}} {{.Time}} {{.Level}} {{.Message}}'
+defaultformat: '{{.Date}} {{.Time}} {{.BoldColor}}{{.Logger}} {{.Level}}{{.NoColor}} {{.Color}}{{.Message}}{{.NoColor}}'
 
 # defaultoutputs defines the default outputs for every logger
 # that has no explicit outputs configured.
@@ -108,7 +48,7 @@ defaultoutputs:
 #   {
 #     url:      # the URL, i.e. file://octo.log
 #     wants:    # the list of log-levels to log
-#               # providing no log-levels implies `all`
+#               # providing no log-levels implies 'all'
 #     format:   # log-format to use, if not the global default
 #   }
 outputs:
@@ -126,10 +66,26 @@ outputs:
 #   {
 #     name:     # a unique name
 #     wants:    # list of log-levels to log
-#               # providing no log-levels implies `all`
+#               # providing no log-levels implies 'all'
 #     outputs:  # list of output URLs to communicate with
-#               # providing no URLs implies `defaultoutputs`
+#               # providing no URLs implies 'defaultoutputs'
 #   }
 loggers:
   - name: main
-```
+`
+
+// GetSampleConfig returns a sample configuration file.
+func GetSampleConfig(v string) string {
+	buf := new(bytes.Buffer)
+	buf.WriteString("# octolog sample configuration file\n")
+	buf.WriteString("# generated: " + time.Now().Format("2006/01/02 15:04:05") + "\n")
+	buf.WriteString("# version: " + v + "\n")
+	buf.WriteString(SampleConfig)
+	return buf.String()
+}
+
+// WriteSampleToFile writes the sample configuration to the given *os.File.
+// Existing files will never be overwritten.
+func WriteSampleToFile(version string, file *os.File) {
+	file.WriteString(GetSampleConfig(version))
+}
