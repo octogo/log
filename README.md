@@ -9,7 +9,7 @@
 - logging in and filtering by log-levels
 - colors *(that are automatically disabled when the output is not a
   terminal)*
-- out-of-the-box routing of errors and warnings to STDERR
+- POSIX compliant routing of WARNINGS and ERRORS to STDERR be default
 - customizable outputs & loggers
 - out-of-the-box support for concurrent use
 

@@ -9,7 +9,7 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-// FileOutput implements an Output logging to a file.
+// FileOutput implements an output that writes the logs to a file.
 type FileOutput struct {
 	File   *os.File
 	wants  []level.Level

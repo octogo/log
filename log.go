@@ -33,7 +33,10 @@ func InitWithConfig(c *config.Config) {
 	log.Configure(c)
 }
 
-// New returns an initialized Logger.
+// New returns an initialized Logger with the given name.
+// If a Logger with the given name has already been registered, then that
+// Logger will be returned instead of initializing dupicate Loggers with the
+// same name. This also ensures that the LID of a logger will always increase.
 func New(name string, wants []level.Level, outputs ...string) *log.Logger {
 	return log.NewLogger(name, wants, outputs...)
 }

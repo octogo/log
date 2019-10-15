@@ -10,6 +10,7 @@ var (
 )
 
 // RegisterOutput registers the given output under the given name.
+// Use this function to register your custom output.
 func RegisterOutput(url string, output Output) Output {
 	outMu.Lock()
 	defer outMu.Unlock()
