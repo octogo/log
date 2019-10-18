@@ -1,3 +1,17 @@
+// Package color provides routines for cooring ASCII test with ANSII escape
+// sequences. See: https://en.wikipedia.org/wiki/ANSI_escape_code
+//
+// A color, in the sense of this package, is an integer which directly
+// translates to the corresponding ANSII sequence numer.
+//
+// Some colors are pre-defined, such as BLACK(30), RED(31), GREEN(32),
+// YELOW(33), BLUE(34), MAGENTA(35), CYAN(36) and WHITE(37).
+//
+// Implements you own colors easily:
+//
+// 		var MyColor int = "\u001b[48;5;"
+//		Colors[level.ERROR] = MyColor
+//
 package color
 
 import (
