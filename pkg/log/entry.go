@@ -75,14 +75,14 @@ func (e entryStruct) Color() string {
 	if e.disableColors {
 		return ""
 	}
-	return color.Colors[e.level]
+	return color.Seq(color.Colors[e.level])
 }
 
 func (e entryStruct) BoldColor() string {
 	if e.disableColors {
 		return ""
 	}
-	return color.BoldColors[e.level]
+	return color.SeqBold(color.Colors[e.level])
 }
 
 func (e entryStruct) NoColor() string {

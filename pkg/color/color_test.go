@@ -54,7 +54,7 @@ func TestColorSeq(t *testing.T) {
 
 func TestColorSeqBold(t *testing.T) {
 	for c, tc := range testColors {
-		if colorSeqBold(c) != fmt.Sprintf("\033[%d;1m", c) {
+		if SeqBold(c) != fmt.Sprintf("\033[%d;1m", c) {
 			t.Errorf("expected %v, got %v", c, tc)
 		}
 	}
@@ -70,7 +70,7 @@ func TestColorSeqReset(t *testing.T) {
 
 func TestLevelColors(t *testing.T) {
 	for l, c := range testLevels {
-		if Colors[l] != Seq(c) {
+		if Seq(Colors[l]) != Seq(c) {
 			t.Errorf("expected %v, got %v", c, Colors[l])
 		}
 	}
@@ -78,8 +78,8 @@ func TestLevelColors(t *testing.T) {
 
 func TestLevelColorsBold(t *testing.T) {
 	for l, c := range testLevels {
-		if BoldColors[l] != colorSeqBold(c) {
-			t.Errorf("expected: %v, got %v", c, BoldColors[l])
+		if SeqBold(Colors[l]) != SeqBold(c) {
+			t.Errorf("expected: %v, got %v", c, SeqBold(Colors[l]))
 		}
 	}
 }

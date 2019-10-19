@@ -3,11 +3,12 @@ package main
 import (
 	"github.com/octogo/log"
 	"github.com/octogo/log/pkg/config"
+	octolog "github.com/octogo/log/pkg/log"
 )
 
 func main() {
 	c := &config.Config{
-		DefaultFormat: log.DefaultDebugFormat,
+		DefaultFormat: octolog.DefaultDebugFormat,
 		LoggerName:    "main",
 	}
 	log.InitWithConfig(c)

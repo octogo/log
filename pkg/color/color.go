@@ -7,6 +7,10 @@
 // Some colors are pre-defined, such as BLACK(30), RED(31), GREEN(32),
 // YELOW(33), BLUE(34), MAGENTA(35), CYAN(36) and WHITE(37).
 //
+// Easily change the mapping between log-level and color like:
+//
+//		Colors[level.ERROR] = colors.Red
+//
 // Implements you own colors easily:
 //
 // 		var MyColor int = "\u001b[48;5;"
@@ -47,7 +51,8 @@ func Seq(Color Color) string {
 	return fmt.Sprintf("\033[%dm", int(Color))
 }
 
-func colorSeqBold(Color Color) string {
+// SeqBold returns the ANSII color escape sequence for the given BOLD color.
+func SeqBold(Color Color) string {
 	return fmt.Sprintf("\033[%d;1m", int(Color))
 }
 
@@ -56,37 +61,25 @@ func isTerminal(file *os.File) bool {
 	return err == nil
 }
 
-var (
-	// Colors contains all ANSI Color escape sequences.
-	Colors = map[level.Level]string{
-		level.ERROR:   Seq(Red),
-		level.WARNING: Seq(Yellow),
-		level.NOTICE:  Seq(Green),
-		level.INFO:    Seq(White),
-		level.DEBUG:   Seq(Cyan),
-	}
-
-	// BoldColors contais all bold ANSI Color escape sequences, ordered by log
-	// level criticality.
-	BoldColors = map[level.Level]string{
-		level.ERROR:   colorSeqBold(Red),
-		level.WARNING: colorSeqBold(Yellow),
-		level.NOTICE:  colorSeqBold(Green),
-		level.INFO:    colorSeqBold(White),
-		level.DEBUG:   colorSeqBold(Cyan),
-	}
-)
+// Colors contains all ANSI Color escape sequences.
+var Colors = map[level.Level]Color{
+	level.ERROR:   Red,
+	level.WARNING: Yellow,
+	level.NOTICE:  Green,
+	level.INFO:    White,
+	level.DEBUG:   Cyan,
+}
 
 // Colorize takes a level.Level{} and an interface{} and then wraps the string
 // representation of the interface in the color configured for the given
 // level.Level{}.
 func Colorize(l level.Level, v interface{}) string {
-	return Colors[l] + fmt.Sprintf("%s", v) + ResetSeq()
+	return Seq(Colors[l]) + fmt.Sprintf("%s", v) + ResetSeq()
 }
 
 // ColorizeBold takes a level.Level and an interface{} and then wraps the
 // string representation of the interface{} in the bold color configured for
 // the given level.Level.
 func ColorizeBold(l level.Level, v interface{}) string {
-	return BoldColors[l] + fmt.Sprintf("%s", v) + ResetSeq()
+	return SeqBold(Colors[l]) + fmt.Sprintf("%s", v) + ResetSeq()
 }
