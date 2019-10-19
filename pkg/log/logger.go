@@ -115,12 +115,7 @@ func (l *Logger) Log(lvl level.Level, v interface{}) {
 
 // Logf logs the given values under the given log-level after formatting them.
 func (l *Logger) Logf(lvl level.Level, format string, args ...interface{}) {
-	for i := range args {
-		if redacted, ok := args[i].(Redacted); ok {
-			args[i] = redacted.Redacted()
-		}
-	}
-	l.log(fmt.Sprintf(format, args...), lvl)
+	l.log(fmt.Sprintf(l.formatArgs(format, args...)), lvl)
 }
 
 // Debug logs the given string with log-level DEBUG.
@@ -131,9 +126,19 @@ func (l *Logger) Debug(v interface{}) {
 	l.log(fmt.Sprintf("%s", v), level.DEBUG)
 }
 
+// Debugf logs the given values with log-level DEBUG after formatting them.
+func (l *Logger) Debugf(format string, args ...interface{}) {
+	l.log(fmt.Sprintf(l.formatArgs(format, args...)), level.DEBUG)
+}
+
 // Info logs the given string with log-level INFO.
 func (l *Logger) Info(v interface{}) {
 	l.log(fmt.Sprintf("%s", v), level.INFO)
+}
+
+// Infof logs the given values with log-level INFO after formatting them.
+func (l *Logger) Infof(format string, args ...interface{}) {
+	l.log(fmt.Sprintf(l.formatArgs(format, args...)), level.INFO)
 }
 
 // Notice logs the given string with log-level NOTICE.
@@ -144,6 +149,11 @@ func (l *Logger) Notice(v interface{}) {
 	l.log(fmt.Sprintf("%s", v), level.NOTICE)
 }
 
+// Noticef logs the given values with log-level NOTICE after formatting them.
+func (l *Logger) Noticef(format string, args ...interface{}) {
+	l.log(fmt.Sprintf(l.formatArgs(format, args...)), level.NOTICE)
+}
+
 // Warning logs the given string with log-level WARNING.
 func (l *Logger) Warning(v interface{}) {
 	if redacted, ok := v.(Redacted); ok {
@@ -152,10 +162,29 @@ func (l *Logger) Warning(v interface{}) {
 	l.log(fmt.Sprintf("%s", v), level.WARNING)
 }
 
+// Warningf logs the given values with log-level WARNING after formatting them.
+func (l *Logger) Warningf(format string, args ...interface{}) {
+	l.log(fmt.Sprintf(l.formatArgs(format, args...)), level.WARNING)
+}
+
 // Error logs the given string with log-level ERROR.
 func (l *Logger) Error(v interface{}) {
 	if redacted, ok := v.(Redacted); ok {
 		v = redacted.Redacted()
 	}
 	l.log(fmt.Sprintf("%s", v), level.ERROR)
+}
+
+// Errorf logs the given values with log-level ERROR after formatting them.
+func (l *Logger) Errorf(format string, args ...interface{}) {
+	l.log(fmt.Sprintf(l.formatArgs(format, args...)), level.ERROR)
+}
+
+func (l Logger) formatArgs(format string, args ...interface{}) string {
+	for i := range args {
+		if redacted, ok := args[i].(Redacted); ok {
+			args[i] = redacted.Redacted()
+		}
+	}
+	return fmt.Sprintf(format, args...)
 }
