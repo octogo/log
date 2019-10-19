@@ -17,19 +17,24 @@ rootlogger: 'main'
 # configuration.
 #
 # supported formatting labels:
-# {{.Date}}   - the date formatted as 2006/01/02
-# {{.Time}}   - the time formatted as 15:04:05
-# {{.Milli}}  - the time formatted as .000
-# {{.Nano}}   - the time formatted as .000000
-# {{.PID}}    - the process' ID
-# {{.PPID}}   - the partent-process' ID
-# {{.GID}}    - the global message ID
-# {{.LID}}    - the logger message ID
-# {{.Logger}} - the name of the logger
-# {{.Level}}  - the log-level of the entry
-# {{.Func}}   - the name of the calling function
-# {{.File}}   - the source file of the calling function
-# {{.Line}}   - the line in the above source file
+# {{.Date}}       - date formatted as 2006/01/02
+# {{.Time}}       - time formatted as 15:04:05
+# {{.Milli}}      - time formatted as .000
+# {{.Nano}}       - time formatted as .000000
+# {{.PID}}        - process' ID
+# {{.PPID}}       - partent-process' ID
+# {{.GID}}        - global message ID
+# {{.LID}}        - logger message ID
+# {{.Logger}}     - name of the logger
+# {{.Level}}      - log-level of the entry
+# {{.Func}}       - name of the calling function
+# {{.File}}       - source file of the calling function
+# {{.Line}}       - line in the above source file
+#
+# supported colorize labels:
+# {{.Color}}      - activates coloring
+# {{.BoldColor}}  - activates bold coloring
+# {{.NoColor}}    - deactivates coloring
 #
 # default: '{{.Date}} {{.Time}} {{.Level}} {{.Message}}'
 defaultformat: '{{.Date}} {{.Time}} {{.BoldColor}}{{.Logger}} {{.Level}}{{.NoColor}} {{.Color}}{{.Message}}{{.NoColor}}'
