@@ -1,85 +1,194 @@
-// Package color provides routines for cooring ASCII test with ANSII escape
-// sequences. See: https://en.wikipedia.org/wiki/ANSI_escape_code
-//
-// A color, in the sense of this package, is an integer which directly
-// translates to the corresponding ANSII sequence numer.
-//
-// Some colors are pre-defined, such as BLACK(30), RED(31), GREEN(32),
-// YELOW(33), BLUE(34), MAGENTA(35), CYAN(36) and WHITE(37).
-//
-// Easily change the mapping between log-level and color like:
-//
-//		Colors[level.ERROR] = colors.Red
-//
-// Implements you own colors easily:
-//
-// 		var MyColor int = "\u001b[48;5;"
-//		Colors[level.ERROR] = MyColor
-//
+// Package color provides an interface for logging text in ANSII colors.
 package color
 
 import (
 	"fmt"
-	"os"
-
-	"github.com/octogo/log/pkg/level"
-	"golang.org/x/sys/unix"
+	"strings"
 )
+
+var escapeSeq = "\033"
+
+// Sequence is defined as
+type Sequence interface {
+	SetAttribute(Attribute) error
+	SetColors([]Color) error
+	IsValid() bool
+
+	fmt.Stringer
+}
+
+type sequence struct {
+	Literal   string
+	Attribute Attribute
+	Colors    []Color
+}
+
+func (seq sequence) String() string {
+	if seq.Literal != "" {
+		return strings.Join([]string{
+			escapeSeq,
+			"[",
+			seq.Literal,
+			"m",
+		}, "")
+	}
+	out := escapeSeq
+	out += "["
+	out += seq.Attribute.String()
+	if seq.Colors != nil && len(seq.Colors) > 0 {
+		out += ";"
+	}
+	colors := make([]string, len(seq.Colors))
+	for i := range seq.Colors {
+		colors[i] = seq.Colors[i].String()
+	}
+	out += strings.Join(colors, ";")
+	out += "m"
+	return out
+}
+
+func (seq *sequence) SetAttribute(attr Attribute) error {
+	var attrValid bool
+	for i := range Attributes {
+		if Attributes[i] == attr {
+			attrValid = true
+			break
+		}
+	}
+	if !attrValid {
+		return fmt.Errorf("unsupported ANSII attribute: %d", attr)
+	}
+	seq.Attribute = attr
+	return nil
+}
+
+func (seq *sequence) SetColors(colors []Color) error {
+	for i := range colors {
+		colorValid := false
+		for j := range Colors {
+			if Colors[j] == colors[i] {
+				colorValid = true
+				break
+			}
+		}
+		if !colorValid {
+			return fmt.Errorf("invalid ANSII color code: %d", colors[i])
+		}
+	}
+	seq.Colors = colors
+	return nil
+}
+
+// IsValid returns true if this ANSII sequence is valid in terms of its
+// configured attributes.
+func (seq sequence) IsValid() bool {
+	attrValid := false
+	for i := range Attributes {
+		if Attributes[i] == seq.Attribute {
+			attrValid = true
+			break
+		}
+	}
+	if !attrValid {
+		return false
+	}
+	return true
+}
+
+// Attribute is defined as a type of int.
+type Attribute int
+
+func (attr Attribute) String() string {
+	return fmt.Sprintf("%d", attr)
+}
+
+// Attributes
+const (
+	NormalDisplay Attribute = 0
+	Bold          Attribute = 1
+	Underline     Attribute = 4
+	Blink         Attribute = 5
+	ReverseVideo  Attribute = 7
+	Invisible     Attribute = 8
+)
+
+// Attributes contains the list of all supported attributes.
+var Attributes = []Attribute{
+	NormalDisplay,
+	Bold,
+	Underline,
+	Blink,
+	ReverseVideo,
+	Invisible,
+}
 
 // Color is defined as a type of int.
 type Color int
 
-// Colors supported by this package.
+func (c Color) String() string {
+	return fmt.Sprintf("%d", c)
+}
+
+// Colors
 const (
-	Black Color = iota + 30
-	Red
-	Green
-	Yellow
-	Blue
-	Magenta
-	Cyan
-	White
+	// foreground colors
+	Black   Color = 30
+	Red     Color = 31
+	Green   Color = 32
+	Yellow  Color = 33
+	Blue    Color = 34
+	Magenta Color = 35
+	Cyan    Color = 36
+	White   Color = 37
+	// background colors
+	BGBlack   Color = 40
+	BGRed     Color = 41
+	BGGreen   Color = 42
+	BGYellow  Color = 43
+	BGBlue    Color = 44
+	BGMagenta Color = 45
+	BGCyan    Color = 46
+	BGWhite   Color = 47
 )
 
-// ResetSeq return a string resetting all ANSI colors.
-func ResetSeq() string {
-	return fmt.Sprint("\033[0m")
+// Colors contains the list of all supported FGColors and BGColors
+var (
+	FGColors = []Color{
+		Black,
+		Red,
+		Green,
+		Yellow,
+		Blue,
+		Magenta,
+		Cyan,
+		White,
+	}
+	BGColors = []Color{
+		BGBlack,
+		BGRed,
+		BGGreen,
+		BGYellow,
+		BGBlue,
+		BGMagenta,
+		BGCyan,
+		BGWhite,
+	}
+	Colors = append(FGColors, BGColors...)
+)
+
+// New returns an ANSII escape sequence based on the given attributes and
+// colors.
+func New(attr Attribute, colors ...Color) Sequence {
+	return &sequence{
+		Attribute: attr,
+		Colors:    colors,
+	}
 }
 
-// Seq returns the ANSII color escape sequence for the given color.
-func Seq(Color Color) string {
-	return fmt.Sprintf("\033[%dm", int(Color))
-}
-
-// SeqBold returns the ANSII color escape sequence for the given BOLD color.
-func SeqBold(Color Color) string {
-	return fmt.Sprintf("\033[%d;1m", int(Color))
-}
-
-func isTerminal(file *os.File) bool {
-	_, err := unix.IoctlGetTermios(int(file.Fd()), unix.TCGETS)
-	return err == nil
-}
-
-// Colors contains all ANSI Color escape sequences.
-var Colors = map[level.Level]Color{
-	level.ERROR:   Red,
-	level.WARNING: Yellow,
-	level.NOTICE:  Green,
-	level.INFO:    White,
-	level.DEBUG:   Cyan,
-}
-
-// Colorize takes a level.Level{} and an interface{} and then wraps the string
-// representation of the interface in the color configured for the given
-// level.Level{}.
-func Colorize(l level.Level, v interface{}) string {
-	return Seq(Colors[l]) + fmt.Sprintf("%s", v) + ResetSeq()
-}
-
-// ColorizeBold takes a level.Level and an interface{} and then wraps the
-// string representation of the interface{} in the bold color configured for
-// the given level.Level.
-func ColorizeBold(l level.Level, v interface{}) string {
-	return SeqBold(Colors[l]) + fmt.Sprintf("%s", v) + ResetSeq()
+// NewLiteral returns a literal ANSII escape sequence based on the given
+// string.
+func NewLiteral(literal string) Sequence {
+	return &sequence{
+		Literal: literal,
+	}
 }

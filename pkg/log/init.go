@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/octogo/log/internal/lib"
+	"github.com/octogo/log/pkg/color"
 	"github.com/octogo/log/pkg/config"
 	"github.com/octogo/log/pkg/level"
 )
@@ -42,9 +43,38 @@ func Configure(c *config.Config) {
 		DefaultOutputs = c.DefaultOutputs
 	}
 	// call Init() after configuring defaults
+	loadLevels(c.Levels)
 	loadOutputs(c.Outputs...)
 	// Todo: loadLoggers
 	Init()
+}
+
+func loadLevels(levels []config.Level) {
+	if levels == nil || len(levels) == 0 {
+		return
+	}
+	for i := range levels {
+		switch strings.ToUpper(levels[i].Color) {
+		case "BLACK":
+			level.Register(levels[i].Name, color.New(color.NormalDisplay, color.Black))
+		case "RED":
+			level.Register(levels[i].Name, color.New(color.NormalDisplay, color.Red))
+		case "GREEN":
+			level.Register(levels[i].Name, color.New(color.NormalDisplay, color.Green))
+		case "YELLOW":
+			level.Register(levels[i].Name, color.New(color.NormalDisplay, color.Yellow))
+		case "BLUE":
+			level.Register(levels[i].Name, color.New(color.NormalDisplay, color.Blue))
+		case "MAGENTA":
+			level.Register(levels[i].Name, color.New(color.NormalDisplay, color.Magenta))
+		case "CYAN":
+			level.Register(levels[i].Name, color.New(color.NormalDisplay, color.Cyan))
+		case "WHITE":
+			level.Register(levels[i].Name, color.New(color.NormalDisplay, color.White))
+		default:
+			level.Register(levels[i].Name, color.NewLiteral(levels[i].Color))
+		}
+	}
 }
 
 func loadOutput(url string) Output {
@@ -56,24 +86,24 @@ func loadOutput(url string) Output {
 	case "file":
 		switch uri {
 		case os.Stdout.Name():
-			if output := GetOutput("file://" + os.Stdout.Name()); output == nil {
+			var output Output
+			if output = GetOutput("file://" + os.Stdout.Name()); output == nil {
 				return NewFileOutput(os.Stdout, nil, DefaultDebugFormat)
-			} else {
-				return output
 			}
+			return output
 		case os.Stderr.Name():
-			if output := GetOutput("file://" + os.Stderr.Name()); output == nil {
+			var output Output
+			if output = GetOutput("file://" + os.Stderr.Name()); output == nil {
 				return NewFileOutput(os.Stderr, nil, DefaultDebugFormat)
-			} else {
-				return output
 			}
+			return output
 		default:
 			f := lib.OpenFile(uri)
-			if output := GetOutput(f.Name()); output == nil {
+			var output Output
+			if output = GetOutput(f.Name()); output == nil {
 				return NewFileOutput(f, nil, DefaultDebugFormat)
-			} else {
-				return output
 			}
+			return output
 		}
 	default:
 		panic(errors.New("unsupported schema in URL: " + schema))

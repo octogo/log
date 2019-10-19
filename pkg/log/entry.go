@@ -75,21 +75,22 @@ func (e entryStruct) Color() string {
 	if e.disableColors {
 		return ""
 	}
-	return color.Seq(color.Colors[e.level])
+	return e.LevelLevel().Color().String()
 }
 
 func (e entryStruct) BoldColor() string {
 	if e.disableColors {
 		return ""
 	}
-	return color.SeqBold(color.Colors[e.level])
+	e.LevelLevel().Color().SetAttribute(color.Bold)
+	return e.LevelLevel().Color().String()
 }
 
 func (e entryStruct) NoColor() string {
 	if e.disableColors {
 		return ""
 	}
-	return color.ResetSeq()
+	return color.New(color.NormalDisplay).String()
 }
 
 func (e entryStruct) Date() string {

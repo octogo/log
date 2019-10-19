@@ -1,85 +1,19 @@
 package color
 
-import (
-	"fmt"
-	"testing"
+import "testing"
 
-	"github.com/octogo/log/pkg/level"
-)
-
-const (
-	testColorBlack Color = iota + 30
-	testColorRed
-	testColorGreen
-	testColorYellow
-	_
-	_
-	testColorCyan
-	testColorWhite
-)
-
-var (
-	testColors = map[Color]Color{
-		Black:  testColorBlack,
-		Red:    testColorRed,
-		Green:  testColorGreen,
-		Yellow: testColorYellow,
-		Cyan:   testColorCyan,
-		White:  testColorWhite,
-	}
-	testLevels = map[level.Level]Color{
-		level.ERROR:   testColorRed,
-		level.WARNING: testColorYellow,
-		level.NOTICE:  testColorGreen,
-		level.INFO:    testColorWhite,
-		level.DEBUG:   testColorCyan,
-	}
-)
-
-func TestColors(t *testing.T) {
-	for c, tc := range testColors {
-		if c != tc {
-			t.Errorf("expected %v, got %v", tc, c)
+func TestNew(t *testing.T) {
+	defer t.Log(New(NormalDisplay))
+	for a := range Attributes {
+		c := New(Attributes[a])
+		t.Logf("ANSII attribute %d: %#v", a, c)
+		for ci := 30; ci <= len(FGColors)+30; ci++ {
+			c = New(Attributes[a], Color(ci))
+			t.Logf("ANSII color %d: %#v", ci, c)
 		}
-	}
-}
-
-func TestColorSeq(t *testing.T) {
-	for c, tc := range testColors {
-		if Seq(c) != fmt.Sprintf("\033[%dm", tc) {
-			t.Errorf("expected %v, got %v", c, tc)
-		}
-	}
-}
-
-func TestColorSeqBold(t *testing.T) {
-	for c, tc := range testColors {
-		if SeqBold(c) != fmt.Sprintf("\033[%d;1m", c) {
-			t.Errorf("expected %v, got %v", c, tc)
-		}
-	}
-}
-
-func TestColorSeqReset(t *testing.T) {
-	expected := fmt.Sprintf("\033[0m")
-	got := ResetSeq()
-	if got != expected {
-		t.Errorf("expected %v, got %v", expected, got)
-	}
-}
-
-func TestLevelColors(t *testing.T) {
-	for l, c := range testLevels {
-		if Seq(Colors[l]) != Seq(c) {
-			t.Errorf("expected %v, got %v", c, Colors[l])
-		}
-	}
-}
-
-func TestLevelColorsBold(t *testing.T) {
-	for l, c := range testLevels {
-		if SeqBold(Colors[l]) != SeqBold(c) {
-			t.Errorf("expected: %v, got %v", c, SeqBold(Colors[l]))
+		for ci := 40; ci <= len(BGColors)+40; ci++ {
+			c = New(Attributes[a], Color(ci))
+			t.Logf("ANSII color %d: %#v", ci, c)
 		}
 	}
 }

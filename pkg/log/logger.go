@@ -105,6 +105,16 @@ func (l *Logger) Wants(lvl level.Level) bool {
 	return false
 }
 
+// Log logs the given value with the given log-level.
+func (l *Logger) Log(lvl level.Level, v interface{}) {
+	l.log(fmt.Sprintf("%s", v), lvl)
+}
+
+// Logf logs the given values under the given log-level after formatting them.
+func (l *Logger) Logf(lvl level.Level, format string, args ...interface{}) {
+	l.log(fmt.Sprintf(format, args...), lvl)
+}
+
 // Debug logs the given string with log-level DEBUG.
 func (l *Logger) Debug(v interface{}) {
 	l.log(fmt.Sprintf("%s", v), level.DEBUG)

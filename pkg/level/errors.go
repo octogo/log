@@ -3,5 +3,5 @@ package level
 import "errors"
 
 var (
-	errLevelInvalid = errors.New("invalid log-level")
+	errLevelUndefined = errors.New("undefined log-level")
 )

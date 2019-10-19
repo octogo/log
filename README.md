@@ -13,9 +13,9 @@
 - logging in and filtering by log-levels
 - colors *(that are automatically disabled when the output is not a
   terminal)*
-- POSIX compliant routing of WARNINGS and ERRORS to STDERR be default
+- POSIX compliant routing of WARNINGS and ERRORS to STDERR by default
 - customizable outputs & loggers
-- out-of-the-box support for concurrent use
+- can be used across multiple goroutines
 
 ----
 
@@ -65,10 +65,7 @@ If you want more granular control over the log-levels of your messages, simply
 use the standard logger or initialize your own `log.Logger{}`.
 
 ```go
-logger := log.New(
-    "myapp", // unique name of logger
-    nil,     // nil implies all
-)
+logger := log.New("myapp", nil)
 logger.Debug("Debug message...")
 logger.Info("Info...")
 logger.Notice("Notification...")
@@ -90,6 +87,19 @@ because none of the default outputs is configured to log DEBUG level.
 ----
 
 ## Configuration
+
+*Octolog* can easily be configured during run-time.
+
+```go
+import "github.com/octogo/log/pkg/config"
+config := &config.Config{
+  // all internal variables can be set here and then passed
+  // to octolog during initialization phase.
+}
+log.InitWithConfig(config)
+```
+
+### Configuration via Simple Textfile
 
 *Octolog* can be configured with a simple *YAML* file that is placed
 in the current working directory. This repository includes a tool for

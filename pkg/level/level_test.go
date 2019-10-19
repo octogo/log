@@ -1,6 +1,10 @@
 package level
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/octogo/log/pkg/color"
+)
 
 func TestBuiltinLevels(t *testing.T) {
 	if ERROR != Level(0) {
@@ -21,13 +25,13 @@ func TestBuiltinLevels(t *testing.T) {
 }
 
 func TestRegister(t *testing.T) {
-	if lvl := Register("ERROR"); lvl != ERROR {
+	if lvl, _, _ := Register("ERROR", color.New(color.NormalDisplay, color.Red)); lvl != ERROR {
 		t.Errorf("expected %v, got %v", ERROR, lvl)
 	}
-	if lvl := Register("debug"); lvl != DEBUG {
+	if lvl, _, _ := Register("debug", color.New(color.NormalDisplay, color.Yellow)); lvl != DEBUG {
 		t.Errorf("ecxpected %v, got %v", DEBUG, lvl)
 	}
-	if lvl := Register("custom"); int(lvl) != 5 {
+	if lvl, _, _ := Register("custom", color.New(color.NormalDisplay, color.Green)); int(lvl) != 5 {
 		t.Errorf("expected %v, got %v", 5, lvl)
 	}
 }
@@ -42,7 +46,7 @@ func TestIsValid(t *testing.T) {
 	if IsValid(Level(99)) {
 		t.Errorf("expected %v, got %v", false, true)
 	}
-	testLevel := Register("test_1")
+	testLevel, _, _ := Register("test_1", color.New(color.NormalDisplay, color.Magenta))
 	if !IsValid(testLevel) {
 		t.Errorf("expected %v, got %v", true, false)
 	}
@@ -52,7 +56,7 @@ func TestIsValidName(t *testing.T) {
 	if IsValidName("test_2") {
 		t.Errorf("expected %v, got %v", false, true)
 	}
-	Register("test_2")
+	Register("test_2", color.New(color.NormalDisplay, color.Magenta))
 	if !IsValidName("test_2") {
 		t.Errorf("expected %v, got %v", true, false)
 	}

@@ -46,6 +46,34 @@ defaultoutputs:
   - 'file:///dev/stdout'
   - 'file:///dev/stderr'
 
+# levels configures the available log-levels and their corresponding colors.
+# You can specify any ANSII color literal, such as
+#   - black
+#   - red
+#   - green
+#   - yellow
+#   - blue
+#   - magenta
+#   - cyan
+#   - white
+# Any other value will be handled like a literal ANSII escape sequence, such as
+#   - 30;41   # (black text on red background)
+#   - 5;31    # blinking red text
+# Note: the default levels [ ERROR, WARNING, NOTICE, INFO, DEBUG ] will always be
+# registered before all custom levels. Therefor, their colors can be overridden,
+# but their order can not.
+levels:
+  - name: ERROR
+    color: red
+  - name: WARNING
+    color: yellow
+  - name: NOTICE
+    color: green
+  - name: INFO
+    color: white
+  - name: DEBUG
+    color: cyan
+
 # outputs defines the outputs that should automatically be
 # initialize upon startup.
 #
