@@ -107,16 +107,27 @@ func (l *Logger) Wants(lvl level.Level) bool {
 
 // Log logs the given value with the given log-level.
 func (l *Logger) Log(lvl level.Level, v interface{}) {
+	if redacted, ok := v.(Redacted); ok {
+		v = redacted.Redacted()
+	}
 	l.log(fmt.Sprintf("%s", v), lvl)
 }
 
 // Logf logs the given values under the given log-level after formatting them.
 func (l *Logger) Logf(lvl level.Level, format string, args ...interface{}) {
+	for i := range args {
+		if redacted, ok := args[i].(Redacted); ok {
+			args[i] = redacted.Redacted()
+		}
+	}
 	l.log(fmt.Sprintf(format, args...), lvl)
 }
 
 // Debug logs the given string with log-level DEBUG.
 func (l *Logger) Debug(v interface{}) {
+	if redacted, ok := v.(Redacted); ok {
+		v = redacted.Redacted()
+	}
 	l.log(fmt.Sprintf("%s", v), level.DEBUG)
 }
 
@@ -127,15 +138,24 @@ func (l *Logger) Info(v interface{}) {
 
 // Notice logs the given string with log-level NOTICE.
 func (l *Logger) Notice(v interface{}) {
+	if redacted, ok := v.(Redacted); ok {
+		v = redacted.Redacted()
+	}
 	l.log(fmt.Sprintf("%s", v), level.NOTICE)
 }
 
 // Warning logs the given string with log-level WARNING.
 func (l *Logger) Warning(v interface{}) {
+	if redacted, ok := v.(Redacted); ok {
+		v = redacted.Redacted()
+	}
 	l.log(fmt.Sprintf("%s", v), level.WARNING)
 }
 
 // Error logs the given string with log-level ERROR.
 func (l *Logger) Error(v interface{}) {
+	if redacted, ok := v.(Redacted); ok {
+		v = redacted.Redacted()
+	}
 	l.log(fmt.Sprintf("%s", v), level.ERROR)
 }
