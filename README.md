@@ -10,6 +10,7 @@
 
 ## Features
 
+- configurable via a simple text-file
 - logging in and filtering by log-levels
 - colors *(that are automatically disabled when the output is not a
   terminal)*
@@ -39,7 +40,7 @@ func main() {
 
 Before using OctoLog it has to initialize itself. The `Init()` func
 will ensure that the default outputs and standard logger are made
-available and that the configuration is loaded correctly.
+available and that the configuration is loaded correctly, if present.
 
 ```go
 log.Init()
@@ -49,15 +50,15 @@ Then you can simply use it like you would use the builtin `log`
 package:
 
 ```go
-log.Println("Hello world!")
+log.Log("Hello world!")
 log.Fatal("FATALITY")
 ```
 
 Above code produces this output:
 
 ```text
-2019/10/13 04:02:19 main Hello world!
-2019/10/13 04:02:19 main FATALITY
+2019/10/13 04:02:19 main INFO Hello world!
+2019/10/13 04:02:19 main ERROR FATALITY
 exit status 1
 ```
 
@@ -65,7 +66,13 @@ If you want more granular control over the log-levels of your messages, simply
 use the standard logger or initialize your own `log.Logger{}`.
 
 ```go
-logger := log.New("myapp", nil)
+logger := log.New(
+  "myapp",  // unique name of the logger
+  nil,      // []level.Level of log-levels to whitelist (nil implies *all*)
+  // if no Outputs are specified, the logger will be initialized with the
+  // DefaultOutputs set as its outputs. But you could easily configure the
+  // Logger to log into a custom log file by specifying 'file://my.log' here.
+  )
 logger.Debug("Debug message...")
 logger.Info("Info...")
 logger.Notice("Notification...")
@@ -74,36 +81,81 @@ logger.Error("Error...")
 ```
 
 ```stdout
-2019/10/13 04:09:33 myapp Info...
-2019/10/13 04:09:33 myapp Notification...
-2019/10/13 04:09:33 myapp Warning...
-2019/10/13 04:09:33 myapp Error...
+2019/10/13 04:09:33 myapp INFO Info...
+2019/10/13 04:09:33 myapp NOTICE Notification...
+2019/10/13 04:09:33 myapp WARNING Warning...
+2019/10/13 04:09:33 myapp ERROR Error...
 ```
 
 **Note:**
 The log-entry with log-level DEBUG is not shown in the output. That's
 because none of the default outputs is configured to log DEBUG level.
+See *Configuration section* below for more details.
+
+### Logging them ALL
+
+The function signatures do not force you to log strings:
+
+```go
+// signature of log.Log
+func Log(interface{}) {}
+// signature of log.Logf
+func Logf(string, ...interface{}) {}
+// signature of log.Logger.Error
+func (Logger) Error(interface{}) {}
+// signature of log.Logger.Errorf
+func (Logger) Errorf(string ...interface{}) {}
+// and so on...
+```
+
+Of course, you can log simple strings too, if you like.
+
+### Redaction
+
+Sometimes it can become desireable to redact certain parts of the log-messages,
+because they would perhaps disclose secrets.
+If a value that gets logged satisfies the `log.Redactor` interface, the
+contents of its `Redacted()` function will be logged instead of its native
+string representation.
+
+```go
+// Redactor is defined as something providing a Redacted() function.
+type Redactor interface {
+  Redacted() string
+}
+```
+
+See `examples/redacted/main.go` for more information.
 
 ----
 
 ## Configuration
 
 *Octolog* can easily be configured during run-time.
+There is a special initialization phase during start-up that takes care of loading
+a possiby existing configuration file, but amost everything can easility be configured during run-time, even after initialization phase.
 
 ```go
 import "github.com/octogo/log/pkg/config"
-config := &config.Config{
+
+log.InitWithConfig(&config.Config{
   // all internal variables can be set here and then passed
   // to octolog during initialization phase.
-}
-log.InitWithConfig(config)
+})
 ```
+
+See `pkg/config/config.go` for more information.
+
+----
 
 ### Configuration via Simple Textfile
 
 *Octolog* can be configured with a simple *YAML* file that is placed
-in the current working directory. This repository includes a tool for
-creating configuration file templates.
+in the current working directory. This enables users of prebuilt binaries
+to configure logging without having to rebuild the Go source.
+
+This repository includes a tool for creating configuration file templates with
+lots of comments and examples that work out-of-the-box.
 
 Simply run:
 
