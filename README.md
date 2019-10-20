@@ -112,10 +112,10 @@ Of course, you can log simple strings too, if you like.
 
 ### Redaction
 
-Sometimes it can become desireable to redact certain parts of the log-messages,
+Sometimes it is desireable to redact certain parts of the log-messages,
 because they would perhaps disclose secrets.
-If a value that gets logged satisfies the `log.Redactor` interface, the
-contents of its `Redacted()` function will be logged instead of its native
+If a logged value satisfies the `log.Redactor` interface, the
+return-value of its `Redacted()` function will be logged instead of its native
 string representation.
 
 ```go
@@ -132,8 +132,10 @@ See `examples/redacted/main.go` for more information.
 ## Configuration
 
 *Octolog* can easily be configured during run-time.
-There is a special initialization phase during start-up that takes care of loading
-a possiby existing configuration file, but amost everything can easility be configured during run-time, even after initialization phase.
+
+There is a special initialization phase during start-up that takes care of
+loading a possibly existing configuration file, but amost everything can
+easiliy be configured during run-time, even after initialization phase.
 
 ```go
 import "github.com/octogo/log/pkg/config"
