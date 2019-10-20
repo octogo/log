@@ -37,7 +37,7 @@ func ParseURL(url string) (schema, uri string, err error) {
 	return
 }
 
-// ParseLevels wraps level.Parse.
+// ParseLevels wraps level.Parse that parses more than one level.
 func ParseLevels(levels ...string) []level.Level {
 	if levels == nil || len(levels) == 0 {
 		return nil

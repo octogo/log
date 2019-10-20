@@ -75,7 +75,7 @@ levels:
     color: cyan
 
 # outputs defines the outputs that should automatically be
-# initialize upon startup.
+# initialized upon startup.
 #
 # an output is defined as:
 #   {

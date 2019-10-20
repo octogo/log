@@ -45,7 +45,7 @@ func Configure(c *config.Config) {
 	// call Init() after configuring defaults
 	loadLevels(c.Levels)
 	loadOutputs(c.Outputs...)
-	// Todo: loadLoggers
+	loadLoggers(c.Loggers...)
 	Init()
 }
 
@@ -129,4 +129,20 @@ func loadOutputs(configuredOutputs ...config.Output) []Output {
 		outputs[i] = o
 	}
 	return outputs
+}
+
+func loadLoggers(configuredLoggers ...config.Logger) []*Logger {
+	if configuredLoggers == nil || len(configuredLoggers) == 0 {
+		return []*Logger{}
+	}
+	loggers := make([]*Logger, len(configuredLoggers))
+	for i := range configuredLoggers {
+		logger := NewLogger(
+			configuredLoggers[i].Name,
+			lib.ParseLevels(configuredLoggers[i].Wants...),
+			configuredLoggers[i].Outputs...,
+		)
+		loggers[i] = logger
+	}
+	return loggers
 }

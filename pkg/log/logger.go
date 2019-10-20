@@ -14,12 +14,12 @@ var defaultLogger *Logger
 
 // Logger is the primary interface for using octolog in other packages.
 type Logger struct {
-	Name     string
-	wants    []level.Level
-	Outputs  []string
-	uid      *uid.UID
-	_outputs []Output
-	mu       *sync.Mutex
+	Name    string
+	wants   []level.Level
+	Outputs []string
+	uid     *uid.UID
+	outputs []Output
+	mu      *sync.Mutex
 }
 
 // NewLogger returns an initialized Logger.
@@ -70,19 +70,19 @@ func (l *Logger) log(msg string, lvl level.Level) {
 		}
 	}
 
-	if l._outputs == nil {
-		l._outputs = make([]Output, len(l.Outputs))
+	if l.outputs == nil {
+		l.outputs = make([]Output, len(l.Outputs))
 		for i := range l.Outputs {
-			l._outputs[i] = loadOutput(l.Outputs[i])
+			l.outputs[i] = loadOutput(l.Outputs[i])
 		}
 	}
 
 	entry := newEntry(msg, l, lvl, caller, file, line)
-	for i := range l._outputs {
-		_, err := l._outputs[i].Log(entry)
+	for i := range l.outputs {
+		_, err := l.outputs[i].Log(entry)
 		if err != nil {
 			l.Outputs = append(l.Outputs[:i], l.Outputs[i+1:]...)
-			l._outputs = append(l._outputs[:i], l._outputs[i+1:]...)
+			l.outputs = append(l.outputs[:i], l.outputs[i+1:]...)
 		}
 	}
 }
