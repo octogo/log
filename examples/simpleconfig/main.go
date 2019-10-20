@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	c := &config.Config{
+	log.InitWithConfig(&config.Config{
 		// set the log-format to the default debug-format
 		DefaultFormat: octolog.DefaultDebugFormat,
 		// set the name of the standard logger to 'main'
@@ -37,14 +37,23 @@ func main() {
 				},
 			},
 		},
-	}
-	log.InitWithConfig(c)
-	l := log.New("", nil)
-	l.Debug("This is a DEBUG log...")
-	l.Info("This is an INFO log...")
-	l.Notice("This is a NOTICE log...")
-	l.Warning("This is a WARNING log...")
-	l.Error("This is an ERROR log...")
+		// optionally configure a dedicated logger that only logs the above two custom
+		// log-levels.
+		Loggers: []config.Logger{
+			config.Logger{
+				Name:  "my-custom-logger",
+				Wants: []string{"custom1", "custom2"},
+			},
+		},
+	})
+
+	l1 := log.New("", nil)
+	l2 := log.New("my-custom-logger", nil)
+	l1.Debug("This is a DEBUG log...")
+	l1.Info("This is an INFO log...")
+	l1.Notice("This is a NOTICE log...")
+	l1.Warning("This is a WARNING log...")
+	l1.Error("This is an ERROR log...")
 
 	custom1, err := level.Parse("custom1")
 	if err != nil {
@@ -54,6 +63,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	l.Log(custom1, "This is a CUSTOM1 log...")
-	l.Log(custom2, "This is a CUSTOM2 log...")
+	l2.Log(custom1, "This is a CUSTOM1 log...")
+	l2.Log(custom2, "This is a CUSTOM2 log...")
 }
