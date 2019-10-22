@@ -13,12 +13,12 @@ var (
 	genconfFlags = []cli.Flag{
 		cli.BoolFlag{
 			Name:  "stdout, o",
-			Usage: "Write sample configuration to STDOUT.",
+			Usage: "Write sample configuration to STDOUT",
 		},
 	}
 	genconfCmd = cli.Command{
 		Name:   "genconf",
-		Usage:  "Creates a sample configuration file in your CWD.",
+		Usage:  "Creates a configuration file in your CWD",
 		Flags:  genconfFlags,
 		Action: genconfRun,
 	}

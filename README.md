@@ -4,29 +4,38 @@
 
 # OctoLog
 
-*Octolog* is a drop-in replacement for Go's built-in *log* package.
-
-----
+*Octolog* is a Go package providing an interface for
+application-level logging.
 
 ## Features
 
-- configurable via a simple text-file
+- works out-of-the-box
+- POSIX compliant routing of warnings and errors to STDERR
 - logging in and filtering by log-levels
+- straight-forward configuration, optionally via YAML file
 - colors *(that are automatically disabled when the output is not a
   terminal)*
-- POSIX compliant routing of WARNINGS and ERRORS to STDERR by default
 - customizable outputs & loggers
-- can be used across multiple goroutines
 
 ----
 
 ## Quickstart
 
-Using *OctoLog* in your code is easy:
+Use the included CLI tool to create a Go source file:
 
 ```bash
-go get -u github.com/octogo/log
+go install github.com/octogo/log/cmd/octolog
+
+octolog gensrc -h
 ```
+
+## Installation
+
+```bash
+go get github.com/octogo/log
+```
+
+## Usage
 
 ```go
 package main
@@ -92,7 +101,7 @@ The log-entry with log-level DEBUG is not shown in the output. That's
 because none of the default outputs is configured to log DEBUG level.
 See *Configuration section* below for more details.
 
-### Logging them ALL
+### Gotta log them ALL
 
 The function signatures do not force you to log strings:
 
@@ -131,7 +140,7 @@ See `examples/redacted/main.go` for more information.
 
 ## Configuration
 
-*Octolog* can easily be configured during run-time.
+*OctoLog* can easily be configured during run-time.
 
 There is a special initialization phase during start-up that takes care of
 loading a possibly existing configuration file, but amost everything can
@@ -152,7 +161,7 @@ See `pkg/config/config.go` for more information.
 
 ### Configuration via Simple Textfile
 
-*Octolog* can be configured with a simple *YAML* file that is placed
+*OctoLog* can be configured with a simple *YAML* file that is placed
 in the current working directory. This enables users of prebuilt binaries
 to configure logging without having to rebuild the Go source.
 

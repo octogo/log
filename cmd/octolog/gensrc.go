@@ -13,7 +13,7 @@ var (
 	gensrcFlags = []cli.Flag{
 		cli.StringFlag{
 			Name:  "pkg, p",
-			Usage: "Name of the Go package the source file will be used in. Defaults to 'main'.",
+			Usage: "Name of the Go package the source file will be used in. Defaults to 'main'",
 		},
 		cli.StringFlag{
 			Name:  "name, n",
@@ -21,12 +21,12 @@ var (
 		},
 		cli.BoolFlag{
 			Name:  "stdout, o",
-			Usage: "Print sample source file to STDOUT rather than writing it to disk.",
+			Usage: "Print sample source file to STDOUT rather than writing it to disk",
 		},
 	}
 	gensrcCmd = cli.Command{
 		Name:   "gensrc",
-		Usage:  "Creates a sample Go source file in your CWD.",
+		Usage:  "Creates a Go source file with sample code in your CWD",
 		Flags:  gensrcFlags,
 		Action: gensrcRun,
 	}
