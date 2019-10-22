@@ -12,7 +12,7 @@ import (
 var octologConfig = &config.Config{
 	DefaultFormat: octolog.DefaultLogFormat,
 	LoggerName:    "main",
-	Levels:        []config.Level{
+	Levels: []config.Level{
 		config.Level{
 			Name: "custom1",
 			Color: "magenta",
@@ -22,7 +22,7 @@ var octologConfig = &config.Config{
 			Color: "5;41",
 		},
 	},
-	Outputs:       []config.Output{
+	Outputs: []config.Output{
 		config.Output{
 			URL: "file:///dev/stdout",
 			Wants: []string{
@@ -34,7 +34,7 @@ var octologConfig = &config.Config{
 			},
 		},
 	},
-	Loggers:       []config.Logger{
+	Loggers: []config.Logger{
 		config.Logger{
 			Name: "my-custom-logger",
 			Wants: []string{"custom1", "custom2"},
