@@ -25,12 +25,12 @@ func Printf(f string, args ...interface{}) {
 
 // Log is an alias for Println.
 func Log(v interface{}) {
-	Println(v)
+	log.Println(v)
 }
 
 // Logf is an alias for Printf.
 func Logf(f string, args ...interface{}) {
-	Printf(f, args...)
+	log.Printf(f, args...)
 }
 
 // Fatal logs the given value with log-level ERROR and exits with RC-1.
