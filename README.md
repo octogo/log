@@ -1,33 +1,22 @@
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![GoDoc](https://godoc.org/github.com/octogo/logrouter?status.svg)](https://godoc.org/github.com/octogo/log)
-[![Build Status](https://travis-ci.org/octogo/logrouter.svg?branch=master)](https://travis-ci.org/octogo/log) 
+[![Build Status](https://travis-ci.org/octogo/logrouter.svg?branch=master)](https://travis-ci.org/octogo/log)
 
 # OctoLog
 
-*Octolog* is a Go package providing an interface for
-application-level logging.
+Go logging for human-beings.
 
 ## Features
 
-- works out-of-the-box
-- POSIX compliant routing of warnings and errors to STDERR
+- easy to use, works out-of-the-box
 - logging in and filtering by log-levels
-- straight-forward configuration, optionally via YAML file
-- colors *(that are automatically disabled when the output is not a
+- POSIX compliant routing of warnings and errors to STDERR
+- straight-forward configuration, optionally via YAML file parsed at startup
+- ANSII colors *(that are automatically disabled when the output is not a
   terminal)*
-- customizable outputs & loggers
+- highly customizable
 
 ----
-
-## Quickstart
-
-Use the included CLI tool to create a Go source file:
-
-```bash
-go install github.com/octogo/log/cmd/octolog
-
-octolog gensrc -h
-```
 
 ## Installation
 
@@ -35,7 +24,26 @@ octolog gensrc -h
 go get github.com/octogo/log
 ```
 
+## Quickstart
+
+Use the included CLI tool to create a Go source file:
+
+```bash
+# install octolog CLI tool
+go install github.com/octogo/log/cmd/octolog
+
+# generate a sample source file
+octolog gensrc -h
+
+# view it
+cat log.go
+```
+
 ## Usage
+
+Before using OctoLog it has to initialize itself. The `Init()` func
+will ensure that the default outputs and standard logger are made
+available and that the configuration is loaded correctly, if present.
 
 ```go
 package main
@@ -43,16 +51,9 @@ package main
 import "github.com/octogo/log"
 
 func main() {
-  /// ...
+  // initialize octolog package
+  log.Init()
 }
-```
-
-Before using OctoLog it has to initialize itself. The `Init()` func
-will ensure that the default outputs and standard logger are made
-available and that the configuration is loaded correctly, if present.
-
-```go
-log.Init()
 ```
 
 Then you can simply use it like you would use the builtin `log`
@@ -63,11 +64,11 @@ log.Log("Hello world!")
 log.Fatal("FATALITY")
 ```
 
-Above code produces this output:
+Above code produces an output similar to this:
 
 ```text
-2019/10/13 04:02:19 main INFO Hello world!
-2019/10/13 04:02:19 main ERROR FATALITY
+2019/10/31 04:20:23 main INFO Hello world!
+2019/10/31 04:20:23 main ERROR FATALITY
 exit status 1
 ```
 
@@ -117,12 +118,12 @@ func (Logger) Errorf(string ...interface{}) {}
 // and so on...
 ```
 
-Of course, you can log simple strings too, if you like.
+Of course you can simply log native strings or any *fmt.Stringer*, if you like.
 
 ### Redaction
 
-Sometimes it is desireable to redact certain parts of the log-messages,
-because they would perhaps disclose secrets.
+Sometimes it is desirable to have more control over how an object is redacted
+when being logged.
 If a logged value satisfies the `log.Redactor` interface, the
 return-value of its `Redacted()` function will be logged instead of its native
 string representation.
@@ -140,11 +141,9 @@ See `examples/redacted/main.go` for more information.
 
 ## Configuration
 
-*OctoLog* can easily be configured during run-time.
-
 There is a special initialization phase during start-up that takes care of
-loading a possibly existing configuration file, but amost everything can
-easiliy be configured during run-time, even after initialization phase.
+loading a possibly existing configuration file, but almost everything can
+easily be configured during run-time, even after initialization phase.
 
 ```go
 import "github.com/octogo/log/pkg/config"
@@ -170,15 +169,12 @@ lots of comments and examples that work out-of-the-box.
 
 Simply run:
 
-```text
+```bash
+# install octolog CLI tool
 go install github.com/octogo/log/cmd/octolog
-```
 
-You can then easily create a configuration file in your current
-working directory by calling:
-
-```
+# create a sample configuration file `./logging.yml`
 octolog genconf
 ```
 
-*See `octolog -h` for usage details.*
+*See `octolog genconf -h` for usage details.*
