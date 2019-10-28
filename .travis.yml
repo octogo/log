@@ -14,7 +14,7 @@ script:
   - go version
   - go build
   - go test -v ./...
-  - go build -o octolog ./cmd/octolog/octolog.go
+  - go build -o octolog ./cmd/octolog
   - ./octolog
 
 notifications:
