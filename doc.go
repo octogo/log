@@ -1,34 +1,10 @@
-/*
-Package log is a very thin and flexible asynchronous logging library.
-It is thread-safe and can be used from many different goroutines
-simulatenously.
-
-	import "github.com/octogo/log"
-
-	func main() {
-			defer log.Close()
-
-			log.Println("this goes to stdout")
-			log.Fatal("this goes to stderr")
-			log.Panic("this goes to stderr")
-
-			// create a logger and log some demo lines
-			logger := log.NewLogger("my-example-logger")
-			logger.Debug("this goes to stdout (teal)")
-			logger.Info("this goes to stdout (default)")
-			logger.Notice("this goes to stdout (green)")
-			logger.Alert("this goes to stderr (magenta)")
-			logger.Warning("this goes to stderr (yellow)")
-			logger.Error("this goes to stderr (red)")
-
-			// create a child logger and log some more demo lines
-			childLogger := logger.NewLogger("child")
-			childLogger.Debug("this goes to stdout (teal)")
-			childLogger.Info("this goes to stdout (default)")
-			childLogger.Notice("this goes to stdout (green)")
-			childLogger.Alert("this goes to stderr (magenta)")
-			childLogger.Warning("this goes to stderr (yellow)")
-			childLogger.Error("this goes to stderr (red)")
-	}
-*/
+// Package log is a drop-in replacement for the builtin log package.
+// It has support for colors, logging in and filtering by log-levels, as well
+// as support for concurrent use across multiple goroutines.
+//
+// The standard Logger routes all logs to the STDOUT and STDERR outputs.
+// By default, the STDOUT output will only log log-levels INFO and NOTICE,
+// while the STDERR output will ony log log-levels WARNING and ERROR.
+//
+// All defaults can be overwritten in code or optionally a plain-text YAML file.
 package log

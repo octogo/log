@@ -1,11 +1,21 @@
-language: go
+language: generic
+dist: bionic
+cache: packages
+sudo: false
 
-go:
-  - "1.8"
-  - "1.9"
-  - "1.10"
-  - "1.11"
-  - "1.12"
+install:
+  - wget https://dl.google.com/go/go1.12.7.linux-amd64.tar.gz
+  - sudo tar -xvf go1.12.7.linux-amd64.tar.gz
+  - sudo mv go /usr/local
+  - export GOROOT=/usr/local/go
+  - export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+
+script:
+  - go version
+  - go build
+  - go test -v ./...
+  - go build -o octolog ./cmd/octolog
+  - ./octolog
 
 notifications:
   email:

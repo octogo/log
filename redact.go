@@ -1,20 +1,11 @@
 package log
 
-var redactRune = rune('*')
+import "github.com/octogo/log/pkg/log"
 
-// Redactor defines the interface for a redactor.
-// Redactors will be redacted (replaced with ***) before being logged.
+// Redactor is defined as any type with a Redact() string function.
+// All values logged will be checked if they satisfy the Redactor
+// interface and if they do, the output of their Redact() function
+// will be logged instead of their string representation.
 type Redactor interface {
-	Redacted() string
-}
-
-// Redacted returns a string of redactRunes of length n.
-func Redacted(n uint) (out string) {
-	if n == 0 {
-		n = 3
-	}
-	for i := 0; i < int(n); i++ {
-		out = out + string(redactRune)
-	}
-	return out
+	log.Redactor
 }
