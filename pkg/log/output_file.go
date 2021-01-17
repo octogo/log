@@ -6,7 +6,7 @@ import (
 
 	"github.com/octogo/log/internal/lib"
 	"github.com/octogo/log/pkg/level"
-	"golang.org/x/sys/unix"
+	"github.com/octogo/log/pkg/log/terminal"
 )
 
 // FileOutput implements an output that writes the logs to a file.
@@ -51,7 +51,7 @@ func (fOut FileOutput) Log(e Entry) (n int, err error) {
 	fOut.mu.Lock()
 	defer fOut.mu.Unlock()
 	if fOut.Wants(e.LevelLevel()) {
-		return fOut.File.WriteString(e.Formatted(fOut.format, !fOut.isTerminal()) + "\n")
+		return fOut.File.WriteString(e.Formatted(fOut.format, !terminal.IsTerminal(int(fOut.File.Fd()))) + "\n")
 	}
 	return 0, nil
 }
@@ -81,9 +81,4 @@ func (fOut FileOutput) Wants(lvl level.Level) bool {
 		}
 	}
 	return false
-}
-
-func (fOut FileOutput) isTerminal() bool {
-	_, err := unix.IoctlGetTermios(int(fOut.File.Fd()), unix.TCGETS)
-	return err == nil
 }
