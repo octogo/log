@@ -39,7 +39,7 @@ func Init() {
 func Configure(c *config.Config) {
 	DefaultLogFormat = c.DefaultFormat
 	LoggerName = c.LoggerName
-	if c.DefaultOutputs != nil && len(c.DefaultOutputs) > 0 {
+	if len(c.DefaultOutputs) > 0 {
 		DefaultOutputs = c.DefaultOutputs
 	}
 	// call Init() after configuring defaults
@@ -50,7 +50,7 @@ func Configure(c *config.Config) {
 }
 
 func loadLevels(levels []config.Level) {
-	if levels == nil || len(levels) == 0 {
+	if len(levels) == 0 {
 		return
 	}
 	for i := range levels {
@@ -111,7 +111,7 @@ func loadOutput(url string) Output {
 }
 
 func loadOutputs(configuredOutputs ...config.Output) []Output {
-	if configuredOutputs == nil || len(configuredOutputs) == 0 {
+	if len(configuredOutputs) == 0 {
 		return []Output{}
 	}
 	outputs := make([]Output, len(configuredOutputs))
@@ -132,7 +132,7 @@ func loadOutputs(configuredOutputs ...config.Output) []Output {
 }
 
 func loadLoggers(configuredLoggers ...config.Logger) []*Logger {
-	if configuredLoggers == nil || len(configuredLoggers) == 0 {
+	if len(configuredLoggers) == 0 {
 		return []*Logger{}
 	}
 	loggers := make([]*Logger, len(configuredLoggers))

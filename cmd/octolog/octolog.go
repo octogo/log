@@ -8,7 +8,7 @@ import (
 )
 
 // Version defines the version of the build.
-var Version = "0.2.0"
+var Version = "0.2.1"
 
 func main() {
 	app := cli.NewApp()

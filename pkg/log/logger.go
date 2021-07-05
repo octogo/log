@@ -27,7 +27,7 @@ func NewLogger(name string, wants []level.Level, Outputs ...string) *Logger {
 	if name == "" {
 		name = LoggerName
 	}
-	if Outputs == nil || len(Outputs) == 0 {
+	if len(Outputs) == 0 {
 		Outputs = DefaultOutputs
 	}
 	l := &Logger{
@@ -115,7 +115,7 @@ func (l *Logger) Log(lvl level.Level, v interface{}) {
 
 // Logf logs the given values under the given log-level after formatting them.
 func (l *Logger) Logf(lvl level.Level, format string, args ...interface{}) {
-	l.log(fmt.Sprintf(l.formatArgs(format, args...)), lvl)
+	l.log(fmt.Sprintln(l.formatArgs(format, args...)), lvl)
 }
 
 // Debug logs the given string with log-level DEBUG.
@@ -128,7 +128,7 @@ func (l *Logger) Debug(v interface{}) {
 
 // Debugf logs the given values with log-level DEBUG after formatting them.
 func (l *Logger) Debugf(format string, args ...interface{}) {
-	l.log(fmt.Sprintf(l.formatArgs(format, args...)), level.DEBUG)
+	l.log(fmt.Sprintln(l.formatArgs(format, args...)), level.DEBUG)
 }
 
 // Info logs the given string with log-level INFO.
@@ -138,7 +138,7 @@ func (l *Logger) Info(v interface{}) {
 
 // Infof logs the given values with log-level INFO after formatting them.
 func (l *Logger) Infof(format string, args ...interface{}) {
-	l.log(fmt.Sprintf(l.formatArgs(format, args...)), level.INFO)
+	l.log(fmt.Sprintln(l.formatArgs(format, args...)), level.INFO)
 }
 
 // Notice logs the given string with log-level NOTICE.
@@ -151,7 +151,7 @@ func (l *Logger) Notice(v interface{}) {
 
 // Noticef logs the given values with log-level NOTICE after formatting them.
 func (l *Logger) Noticef(format string, args ...interface{}) {
-	l.log(fmt.Sprintf(l.formatArgs(format, args...)), level.NOTICE)
+	l.log(fmt.Sprintln(l.formatArgs(format, args...)), level.NOTICE)
 }
 
 // Warning logs the given string with log-level WARNING.
@@ -164,7 +164,7 @@ func (l *Logger) Warning(v interface{}) {
 
 // Warningf logs the given values with log-level WARNING after formatting them.
 func (l *Logger) Warningf(format string, args ...interface{}) {
-	l.log(fmt.Sprintf(l.formatArgs(format, args...)), level.WARNING)
+	l.log(fmt.Sprintln(l.formatArgs(format, args...)), level.WARNING)
 }
 
 // Error logs the given string with log-level ERROR.
@@ -177,7 +177,7 @@ func (l *Logger) Error(v interface{}) {
 
 // Errorf logs the given values with log-level ERROR after formatting them.
 func (l *Logger) Errorf(format string, args ...interface{}) {
-	l.log(fmt.Sprintf(l.formatArgs(format, args...)), level.ERROR)
+	l.log(fmt.Sprintln(l.formatArgs(format, args...)), level.ERROR)
 }
 
 func (l Logger) formatArgs(format string, args ...interface{}) string {

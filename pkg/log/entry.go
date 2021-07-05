@@ -126,7 +126,7 @@ func (e entryStruct) LID() string {
 }
 
 func (e entryStruct) Logger() string {
-	return fmt.Sprintf("%s", e.logger)
+	return e.logger
 }
 
 func (e entryStruct) Level() string {
