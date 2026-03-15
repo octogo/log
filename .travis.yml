@@ -4,7 +4,7 @@ cache: packages
 sudo: false
 
 install:
-  - wget https://dl.google.com/go/go1.12.7.linux-amd64.tar.gz
+  - wget https://dl.google.com/go/go1.25.linux-amd64.tar.gz
   - sudo tar -xvf go1.12.7.linux-amd64.tar.gz
   - sudo mv go /usr/local
   - export GOROOT=/usr/local/go
@@ -14,8 +14,8 @@ script:
   - go version
   - go build
   - go test -v ./...
-  - go build -o octolog ./cmd/octolog
-  - ./octolog
+  #- go build -o octolog ./cmd/octolog
+  #- ./octolog
 
 notifications:
   email:

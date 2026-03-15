@@ -1,10 +1,14 @@
 // Package log is a drop-in replacement for the builtin log package.
-// It has support for colors, logging in and filtering by log-levels, as well
-// as support for concurrent use across multiple goroutines.
+// It features:
 //
-// The standard Logger routes all logs to the STDOUT and STDERR outputs.
-// By default, the STDOUT output will only log log-levels INFO and NOTICE,
-// while the STDERR output will ony log log-levels WARNING and ERROR.
+//   - concurrent logging across multiple goroutines
+//   - logging in and filtering by log-levels
+//   - custom formatting of log-messages
+//   - individual ANSII colors per log-level
 //
-// All defaults can be overwritten in code or optionally a plain-text YAML file.
+// The DefaultLogger comes with a slightly more verbose formatter than the
+// builtin log package. It also automatically sends all errors and warnings to
+// the STDERR sink instead of STDOUT.
+//
+// Everything can be customized via code.
 package log
