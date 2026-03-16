@@ -55,7 +55,7 @@ func Error(s ...any) {
 	DefaultLogger.Error(s...)
 }
 
-// PrintErrf works like Printlf, but writes the message with log-level ERROR.
-func PrintErrf(p string, s ...any) {
+// Errorf works like Printlf, but writes the message with log-level ERROR.
+func Errorf(p string, s ...any) {
 	DefaultLogger.Errorf(p, s...)
 }

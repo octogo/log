@@ -169,8 +169,7 @@ func (logger *Logger) log(sink *Sink, msg Message) {
 		}
 	}
 
-	line := logger.fmt.Format(&msg)
-	if _, err := sink.Write([]byte(line)); err != nil {
+	if _, err := sink.Log(msg, logger.fmt); err != nil {
 		log.Fatal(err)
 	}
 }

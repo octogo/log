@@ -22,8 +22,9 @@ var (
 
 // Formatter is a helper for formatting log messages.
 type Formatter struct {
-	msg  *Message
-	tmpl *template.Template
+	tmpl     *template.Template
+	colorize bool
+	msg      Message
 }
 
 // NewFormatter returns an initialized Formatter.
@@ -39,8 +40,9 @@ func NewFormatter(format string) Formatter {
 }
 
 // Format takes a *Message and returns it as formatted string.
-func (f Formatter) Format(msg *Message) string {
+func (f Formatter) Format(msg Message, colorize bool) string {
 	f.msg = msg
+	f.colorize = colorize
 	buf := new(bytes.Buffer)
 	err := f.tmpl.Execute(buf, f)
 	if err != nil {
