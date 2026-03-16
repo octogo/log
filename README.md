@@ -27,10 +27,10 @@ package main
 
 import "github.com/octogo/log/v2
 
-// monkey-patch os.Exit to avoid pre-matutre end of demo code.
-os.Exit = func(code int) {
+// set a custom ExitHandler to avoid pre-mature end of demo code.
+log.ExitHandler(func(code int) {
   fmt.Println("EXIT-CODE:", code)
-}
+})
 
 // Drop-in replacement for builtin "log" package.
 log.Println("This is a normal log message.")
