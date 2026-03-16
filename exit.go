@@ -9,3 +9,7 @@ type ExitFunc func(int)
 // exit holds a reference to os.Exit.
 // This is needed for tests to continue wihtout actually calling os.Exit.
 var exit ExitFunc = os.Exit
+
+func OverrideOSExit(f func(code int)) {
+	exit = f
+}

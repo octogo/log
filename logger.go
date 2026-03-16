@@ -3,7 +3,6 @@ package log
 import (
 	"fmt"
 	"log"
-	"os"
 	"runtime"
 	"strings"
 	"sync"
@@ -74,43 +73,43 @@ func (l *Logger) Printf(p string, s ...any) {
 	l.Log(INFO, fmt.Sprintf(p, s...))
 }
 
-// PrintDebug logs a line with log-level DEBUG.
-func (l *Logger) PrintDebug(s ...any) {
+// Debug logs a line with log-level DEBUG.
+func (l *Logger) Debug(s ...any) {
 	l.Log(DEBUG, s...)
 }
 
-// PrintDebugf logs a line with log-level DEBUG.
-func (l *Logger) PrintDebugf(p string, s ...any) {
+// Debugf logs a line with log-level DEBUG.
+func (l *Logger) Debugf(p string, s ...any) {
 	l.Log(DEBUG, fmt.Sprintf(p, s...))
 }
 
-// PrintNotice logs a line with log-level NOTICE.
-func (l *Logger) PrintNotice(s ...any) {
+// Notice logs a line with log-level NOTICE.
+func (l *Logger) Notice(s ...any) {
 	l.Log(NOTICE, s...)
 }
 
-// PrintNoticef logs a line with log-level NOTICE.
-func (l *Logger) PrintNoticef(p string, s ...any) {
+// Noticef logs a line with log-level NOTICE.
+func (l *Logger) Noticef(p string, s ...any) {
 	l.Log(NOTICE, fmt.Sprintf(p, s...))
 }
 
-// PrintWarning logs a line with log-level WARNING.
-func (l *Logger) PrintWarning(s ...any) {
+// Warning logs a line with log-level WARNING.
+func (l *Logger) Warning(s ...any) {
 	l.Log(WARNING, s...)
 }
 
-// PrintWarningf logs a line with log-level WARNING.
-func (l *Logger) PrintWarningf(p string, s ...any) {
+// Warningf logs a line with log-level WARNING.
+func (l *Logger) Warningf(p string, s ...any) {
 	l.Log(WARNING, fmt.Sprintf(p, s...))
 }
 
-// PrintErr logs a line with log-level ERROR.
-func (l *Logger) PrintErr(s ...any) {
+// Error logs a line with log-level ERROR.
+func (l *Logger) Error(s ...any) {
 	l.Log(ERROR, s...)
 }
 
-// PrintErrf logs a line with log-level ERROR.
-func (l *Logger) PrintErrf(p string, s ...any) {
+// Errorf logs a line with log-level ERROR.
+func (l *Logger) Errorf(p string, s ...any) {
 	l.Log(ERROR, fmt.Sprintf(p, s...))
 }
 
@@ -123,7 +122,7 @@ func (l *Logger) Fatal(s ...any) {
 // Fatalf logs a line with log-level ERROR and then exists the program.
 func (l *Logger) Fatalf(p string, s ...any) {
 	l.Log(ERROR, fmt.Sprintf(p, s...))
-	os.Exit(1)
+	exit(1)
 }
 
 // Log sends any message with the given log-level to all sinks of this logger.

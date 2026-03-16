@@ -13,51 +13,49 @@ func Printf(p string, s ...any) {
 // Fatal is the drop-in replacement for the builtin's log.Fatal()
 func Fatal(s ...any) {
 	DefaultLogger.Fatal(s...)
-	exit(1)
 }
 
 // Fatalf is the drop-in replacement for the builtin's log.Fatalf()
 func Fatalf(p string, s ...any) {
 	DefaultLogger.Fatalf(p, s...)
-	exit(1)
 }
 
-// PrintDebug works like Println, but writes the message with log-level DEBUG.
-func PrintDebug(s ...any) {
-	DefaultLogger.PrintDebug(s...)
+// Debug works like Println, but writes the message with log-level DEBUG.
+func Debug(s ...any) {
+	DefaultLogger.Debug(s...)
 }
 
-// PrintDebugf works like Printf, but writes the message with log-level DEBUG.
-func PrintDebugf(p string, s ...any) {
-	DefaultLogger.PrintDebugf(p, s...)
+// Debugf works like Printf, but writes the message with log-level DEBUG.
+func Debugf(p string, s ...any) {
+	DefaultLogger.Debugf(p, s...)
 }
 
-// PrintNotice works like Println, but writes the message with log-level NOTICE.
-func PrintNotice(s ...any) {
-	DefaultLogger.PrintNotice(s...)
+// Notice works like Println, but writes the message with log-level NOTICE.
+func Notice(s ...any) {
+	DefaultLogger.Notice(s...)
 }
 
-// PrintNoticef works like Printf, but writes the message with log-level NOTICE.
-func PrintNoticef(p string, s ...any) {
-	DefaultLogger.PrintNoticef(p, s...)
+// Noticef works like Printf, but writes the message with log-level NOTICE.
+func Noticef(p string, s ...any) {
+	DefaultLogger.Noticef(p, s...)
 }
 
-// PrintWarning works like Println, but writes the message with log-level WARNING.
-func PrintWarning(s ...any) {
-	DefaultLogger.PrintWarning(s...)
+// Warning works like Println, but writes the message with log-level WARNING.
+func Warning(s ...any) {
+	DefaultLogger.Warning(s...)
 }
 
-// PrintWarningf works like Printf, but writes the message with log-level WARNING.
-func PrintWarningf(p string, s ...any) {
-	DefaultLogger.PrintWarningf(p, s...)
+// Warningf works like Printf, but writes the message with log-level WARNING.
+func Warningf(p string, s ...any) {
+	DefaultLogger.Warningf(p, s...)
 }
 
-// PrintErr works like Println, but writes the message with log-level ERROR.
-func PrintErr(s ...any) {
-	DefaultLogger.PrintErr(s...)
+// Error works like Println, but writes the message with log-level ERROR.
+func Error(s ...any) {
+	DefaultLogger.Error(s...)
 }
 
 // PrintErrf works like Printlf, but writes the message with log-level ERROR.
 func PrintErrf(p string, s ...any) {
-	DefaultLogger.PrintErrf(p, s...)
+	DefaultLogger.Errorf(p, s...)
 }
