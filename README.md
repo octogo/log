@@ -25,35 +25,79 @@ go get github.com/octogo/log/v2
 ```go
 package main
 
-import "github.com/octogo/log/v2
+import (
+	"fmt"
+	"sync"
 
-// set a custom ExitHandler to avoid pre-mature end of demo code.
-log.ExitHandler(func(code int) {
-  fmt.Println("EXIT-CODE:", code)
-})
-
-// Drop-in replacement for builtin "log" package.
-log.Println("This is a normal log message.")
-log.Printf("This is another normal log message via %s.", "Printf")
-log.Fatal("This is a fatal error written to STDERR.")
-log.Fatalf("This is another fatal error written to STDERR via %s.", "Fatalf")
-
-// But there are several additional log-levels.
-log.Debug("This is some debug output.")
-log.Notice("This is a notification in GREEN.")
-log.Warning("This is a warning in YELLOW on STDERR.")
-log.Error("This is an error in RED on STDERR.")
-
-// A log-level is simply a string. Add arbitrary custom log-levels.
-log.Log(log.Level("CUSTOM"), "This is a log-entry with a CUSTOM log-level.")
-
-// Use Loggers to log concurrent code.
-logger := log.New(
-  "My App",
-  WantsAllLevels(),
-  DefaultFormat,
-  DefaultSinks(),
+	"github.com/octogo/log/v2"
 )
 
-goroutineA := logger.NewLogger("")
+func main() {
+package main
+
+import (
+	"fmt"
+	"sync"
+
+	"github.com/octogo/log/v2"
+	"github.com/octogo/log/v2/ansii"
+)
+
+func main() {
+	// Drop-in replacement for builtin "log" package.
+	log.Println("This is a normal log message.")
+	log.Printf("This is another normal log message via %s.", "Printf")
+	log.Fatal("This is a fatal error written to STDERR.")
+	log.Fatalf("This is another fatal error written to STDERR via %s.", "Fatalf")
+
+	// But there are several additional log-levels.
+	log.Debug("This is some debug output.")
+	log.Notice("This is a notification in GREEN.")
+	log.Warning("This is a warning in YELLOW on STDERR.")
+	log.Error("This is an error in RED on STDERR.")
+
+	// A log-level is simply a string. Add arbitrary custom log-levels.
+	CUSTOM, err := log.AddLevel("CUSTOM", ansii.MAGENTA)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	l := log.DefaultLogger
+	l.SetWants(log.WantsAllLevels())
+	l.Sinks[0].SetWants(log.WantsAllLevels()) // sink[0] is STDOUT
+	l.Log(CUSTOM, "This is a log-entry with a CUSTOM log-level.")
+
+	// You can route logs to files and filter for log-levels, while doing so.
+	l.AddSinks(
+		log.WithSink("test.custom", log.WantsLevels(CUSTOM)),
+		log.WithSink("test.log", log.WantsLevels(log.INFO, log.NOTICE)),
+		log.WithSink("test.err", log.WantsLevels(log.WARNING, log.ERROR)),
+	)
+	l.Log(CUSTOM, "This is a log-entry with a CUSTOM log-level on STDOUT and in `test.custom`.")
+	l.Log(log.INFO, "This is an INFO on STDOUT and in `test.log`.")
+	l.Log(log.ERROR, "This is an ERROR on STDOUT and in `test.err`.")
+
+	// Use Loggers to log concurrent code.
+	l = log.New(
+		"MyApp",
+		log.WantsAllLevels(),
+		log.DefaultFormat,
+		log.DefaultSinks()...,
+	)
+	l.Println("Hello from MyApp!")
+
+	wg := sync.WaitGroup{}
+
+	wg.Go(func() {
+		l := l.NewLogger("Child A")
+		l.Println("Hello from A!")
+	})
+
+	wg.Go(func() {
+		l := l.NewLogger("Child B")
+		l.Println("Hello from B!")
+	})
+
+	wg.Wait()
+}
 ```

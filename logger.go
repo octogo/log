@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"runtime"
+	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -33,8 +34,8 @@ type Logger struct {
 	// any of the wanted log-levels.
 	Sinks []*Sink
 
-	// format is raw template-string for formatting log-messages.
-	format string
+	// Formatter is raw template-string for formatting log-messages.
+	Formatter string
 
 	// fmt is the initialized template.
 	fmt Formatter
@@ -54,12 +55,12 @@ func New(name string, wants []Level, format string, sinks ...*Sink) *Logger {
 	}
 
 	return &Logger{
-		Name:   name,
-		Wants:  wants,
-		Sinks:  sinks,
-		format: format,
-		fmt:    NewFormatter(format),
-		mu:     &sync.Mutex{},
+		Name:      name,
+		Wants:     wants,
+		Sinks:     sinks,
+		Formatter: format,
+		fmt:       NewFormatter(format),
+		mu:        &sync.Mutex{},
 	}
 }
 
@@ -127,6 +128,13 @@ func (l *Logger) Fatalf(p string, s ...any) {
 
 // Log sends any message with the given log-level to all sinks of this logger.
 func (logger *Logger) Log(level Level, s ...any) {
+	logger.mu.Lock()
+	defer logger.mu.Unlock()
+
+	if !slices.Contains(logger.Wants, level) {
+		return
+	}
+
 	segments := make([]string, len(s))
 	for i, p := range s {
 		switch t := p.(type) {
@@ -138,10 +146,10 @@ func (logger *Logger) Log(level Level, s ...any) {
 	}
 
 	msg := Message{
-		timestamp: time.Now(),
-		logger:    logger,
-		level:     level,
-		msg:       strings.Join(segments, " "),
+		Timestamp: time.Now(),
+		Logger:    logger,
+		Level:     level,
+		Msg:       strings.Join(segments, " "),
 	}
 
 	for _, sink := range logger.Sinks {
@@ -153,9 +161,6 @@ func (logger *Logger) Log(level Level, s ...any) {
 
 // log is a helper for Log().
 func (logger *Logger) log(sink *Sink, msg Message) {
-	logger.mu.Lock()
-	defer logger.mu.Unlock()
-
 	var (
 		stackDepth = 4
 		fpcs       = make([]uintptr, 1)
@@ -164,8 +169,8 @@ func (logger *Logger) log(sink *Sink, msg Message) {
 	if n != 0 {
 		f := runtime.FuncForPC(fpcs[0] - 1)
 		if f != nil {
-			msg.file, msg.line = f.FileLine(fpcs[0] - 1)
-			msg.caller = f.Name()
+			msg.File, msg.Line = f.FileLine(fpcs[0] - 1)
+			msg.Caller = f.Name()
 		}
 	}
 
@@ -191,7 +196,7 @@ func (logger *Logger) SetWants(wants []Level) {
 // SetFormat sets the template-string of this Logger for formatting
 // log-messages.
 func (logger *Logger) SetFormat(format string) {
-	logger.format = format
+	logger.Formatter = format
 	logger.fmt = NewFormatter(format)
 }
 
@@ -220,7 +225,7 @@ func (logger *Logger) NewLogger(name string) *Logger {
 	return New(
 		strings.Join([]string{logger.Name, name}, "."),
 		logger.Wants,
-		logger.format,
+		logger.Formatter,
 		logger.Sinks...,
 	)
 }
