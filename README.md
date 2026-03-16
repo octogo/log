@@ -4,177 +4,56 @@
 
 # OctoLog
 
-Go logging for human-beings.
+Go logging the way I like it.
 
 ## Features
 
-- easy to use, works out-of-the-box
-- logging in and filtering by log-levels
+- drop-in replacement of the builtin "log" package
+- customizable and colorful log-levels
 - POSIX compliant routing of warnings and errors to STDERR
-- straight-forward configuration, optionally via YAML file parsed at startup
-- ANSII colors *(that are automatically disabled when the output is not a
-  terminal)*
-- highly customizable
 
 ----
 
 ## Installation
 
 ```bash
-go get github.com/octogo/log
+go get github.com/octogo/log/v2
 ```
 
 ## Quickstart
 
-Use the included CLI tool to create a Go source file:
-
-```bash
-# install octolog CLI tool
-go install github.com/octogo/log/cmd/octolog
-
-# generate a sample source file
-octolog gensrc -h
-
-# view it
-cat log.go
-```
-
-## Usage
-
-Before using OctoLog it has to initialize itself. The `Init()` func
-will ensure that the default outputs and standard logger are made
-available and that the configuration is loaded correctly, if present.
-
 ```go
 package main
 
-import "github.com/octogo/log"
+import "github.com/octogo/log/v2
 
-func main() {
-  // initialize octolog package
-  log.Init()
+// monkey-patch os.Exit to avoid pre-matutre end of demo code.
+os.Exit = func(code int) {
+  fmt.Println("EXIT-CODE:", code)
 }
-```
 
-Then you can simply use it like you would use the builtin `log`
-package:
+// Drop-in replacement for builtin "log" package.
+log.Println("This is a normal log message.")
+log.Printf("This is another normal log message via %s.", "Printf")
+log.Fatal("This is a fatal error written to STDERR.")
+log.Fatalf("This is another fatal error written to STDERR via %s.", "Fatalf")
 
-```go
-log.Log("Hello world!")
-log.Fatal("FATALITY")
-```
+// But there are several additional log-levels.
+log.Debug("This is some debug output.")
+log.Notice("This is a notification in GREEN.")
+log.Warning("This is a warning in YELLOW on STDERR.")
+log.Error("This is an error in RED on STDERR.")
 
-Above code produces an output similar to this:
+// A log-level is simply a string. Add arbitrary custom log-levels.
+log.Log(log.Level("CUSTOM"), "This is a log-entry with a CUSTOM log-level.")
 
-```text
-2019/10/31 04:20:23 main INFO Hello world!
-2019/10/31 04:20:23 main ERROR FATALITY
-exit status 1
-```
-
-If you want more granular control over the log-levels of your messages, simply
-use the standard logger or initialize your own `log.Logger{}`.
-
-```go
+// Use Loggers to log concurrent code.
 logger := log.New(
-  "myapp",  // unique name of the logger
-  nil,      // []level.Level of log-levels to whitelist (nil implies *all*)
-  // if no Outputs are specified, the logger will be initialized with the
-  // DefaultOutputs set as its outputs. But you could easily configure the
-  // Logger to log into a custom log file by specifying 'file://my.log' here.
-  )
-logger.Debug("Debug message...")
-logger.Info("Info...")
-logger.Notice("Notification...")
-logger.Warning("Warning...")
-logger.Error("Error...")
+  "My App",
+  WantsAllLevels(),
+  DefaultFormat,
+  DefaultSinks(),
+)
+
+goroutineA := logger.NewLogger("")
 ```
-
-```stdout
-2019/10/13 04:09:33 myapp INFO Info...
-2019/10/13 04:09:33 myapp NOTICE Notification...
-2019/10/13 04:09:33 myapp WARNING Warning...
-2019/10/13 04:09:33 myapp ERROR Error...
-```
-
-**Note:**
-The log-entry with log-level DEBUG is not shown in the output. That's
-because none of the default outputs is configured to log DEBUG level.
-See *Configuration section* below for more details.
-
-### Gotta log them ALL
-
-The function signatures do not force you to log strings:
-
-```go
-// signature of log.Log
-func Log(interface{}) {}
-// signature of log.Logf
-func Logf(string, ...interface{}) {}
-// signature of log.Logger.Error
-func (Logger) Error(interface{}) {}
-// signature of log.Logger.Errorf
-func (Logger) Errorf(string ...interface{}) {}
-// and so on...
-```
-
-Of course you can simply log native strings or any *fmt.Stringer*, if you like.
-
-### Redaction
-
-Sometimes it is desirable to have more control over how an object is redacted
-when being logged.
-If a logged value satisfies the `log.Redactor` interface, the
-return-value of its `Redacted()` function will be logged instead of its native
-string representation.
-
-```go
-// Redactor is defined as something providing a Redacted() function.
-type Redactor interface {
-  Redacted() string
-}
-```
-
-See `examples/redacted/main.go` for more information.
-
-----
-
-## Configuration
-
-There is a special initialization phase during start-up that takes care of
-loading a possibly existing configuration file, but almost everything can
-easily be configured during run-time, even after initialization phase.
-
-```go
-import "github.com/octogo/log/pkg/config"
-
-log.InitWithConfig(&config.Config{
-  // all internal variables can be set here and then passed
-  // to octolog during initialization phase.
-})
-```
-
-See `pkg/config/config.go` for more information.
-
-----
-
-### Configuration via Simple Textfile
-
-*OctoLog* can be configured with a simple *YAML* file that is placed
-in the current working directory. This enables users of prebuilt binaries
-to configure logging without having to rebuild the Go source.
-
-This repository includes a tool for creating configuration file templates with
-lots of comments and examples that work out-of-the-box.
-
-Simply run:
-
-```bash
-# install octolog CLI tool
-go install github.com/octogo/log/cmd/octolog
-
-# create a sample configuration file `./logging.yml`
-octolog genconf
-```
-
-*See `octolog genconf -h` for usage details.*
