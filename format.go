@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"os"
-
-	"github.com/octogo/log/v2/ansii"
+	"time"
 )
 
 var (
@@ -18,6 +17,9 @@ var (
 
 	// MinimalFormat mimics the format of the builtin log package.
 	MinimalFormat = "{{.Message}}"
+
+	// predefinedNow is a helper for testing with predefined time.Now()
+	predefinedNow *time.Time
 )
 
 // Formatter is a helper for formatting log messages.
@@ -53,22 +55,46 @@ func (f Formatter) Format(msg Message, colorize bool) string {
 
 // Date returns the string-formatted date of the log-message's timestamp.
 func (f Formatter) Date() string {
-	return f.msg.Timestamp.Format("2006/01/02")
+	var date time.Time
+	if predefinedNow != nil {
+		date = *predefinedNow
+	} else {
+		date = f.msg.Timestamp
+	}
+	return date.Format("2006/01/02")
 }
 
 // Time returns the string-formatted time of the log-message's timestamp.
 func (f Formatter) Time() string {
-	return f.msg.Timestamp.Format("15:04:05")
+	var t time.Time
+	if predefinedNow != nil {
+		t = *predefinedNow
+	} else {
+		t = f.msg.Timestamp
+	}
+	return t.Format("15:04:05")
 }
 
 // Milli returns the string-formatted millisecond of the log-message's timestamp.
 func (f Formatter) Milli() string {
-	return f.msg.Timestamp.Format(".000")
+	var t time.Time
+	if predefinedNow != nil {
+		t = *predefinedNow
+	} else {
+		t = f.msg.Timestamp
+	}
+	return t.Format(".000")
 }
 
 // Nano returns the string.formatted nanosecond of the log-message's timestamp.
 func (f Formatter) Nano() string {
-	return f.msg.Timestamp.Format(".000000")
+	var t time.Time
+	if predefinedNow != nil {
+		t = *predefinedNow
+	} else {
+		t = f.msg.Timestamp
+	}
+	return t.Format(".000000")
 }
 
 // PID returns the string-formatted PID of this process.
@@ -111,7 +137,7 @@ func (f Formatter) NoColor() string {
 	if !f.colorize {
 		return ""
 	}
-	return ansii.Reset()
+	return ansiiReset()
 }
 
 // Color returns the ANSII escape sequence for the color defined by the
@@ -120,7 +146,7 @@ func (f Formatter) Color() string {
 	if !f.colorize {
 		return ""
 	}
-	return ansii.Sequence(ansii.Normal, ColorOf(f.msg.Level))
+	return AnsiiSequence(Normal, ColorOf(f.msg.Level))
 }
 
 // BoldColor returns the ANSII escape-sequence for the color defined by the
@@ -129,5 +155,5 @@ func (f Formatter) BoldColor() string {
 	if !f.colorize {
 		return ""
 	}
-	return ansii.Sequence(ansii.Bold, ColorOf(f.msg.Level))
+	return AnsiiSequence(Bold, ColorOf(f.msg.Level))
 }

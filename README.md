@@ -29,7 +29,6 @@ import (
 	"fmt"
 
 	"github.com/octogo/log/v2"
-	"github.com/octogo/log/v2/ansii"
 )
 
 func main() {
@@ -52,7 +51,7 @@ func main() {
 
 	// Log-level are simply strings. Add arbitrary custom log-levels and they
 	// will automatically be picked up by the DefaultLogger and the STDOUT sink.
-	CUSTOM := log.AddLevel("CUSTOM", ansii.MAGENTA)
+	CUSTOM := log.AddLevel("CUSTOM", log.MAGENTA)
 
 	// Logging custom log-levels can only be done through a Logger.
 	// The simplest case is to use the DefaultLogger, which automatically
@@ -70,10 +69,7 @@ func main() {
 	logger.Log(CUSTOM, "Hello from MyCustomLogger!")
 
 	// Create arbitrary custom Loggers as you please...
-	logger = log.New(
-		"MyApp",
-		 log.WantsAllLevels(),  // includes custom log-levels
-	)
+	logger = log.New("MyApp", log.WantsAllLevels())
 	logger.Println("Hello from MyApp!")
 
 	// ... add child Loggers for safely logging concurrent code in a structured
@@ -84,7 +80,7 @@ func main() {
 	childB.Println("Hello from child B!")
 
 	// Children inherit Wants() and Sinks() from their parent, at creation.
-	// Therefore it makes sense to configure the parent before spawning child
+	// Therefor it makes sense to configure the parent before spawning child
 	// Loggers.
 	logger = log.New(
 		"MyApp",

@@ -3,8 +3,6 @@ package log
 import (
 	"os"
 	"sync"
-
-	"github.com/octogo/log/v2/ansii"
 )
 
 type Level string
@@ -20,15 +18,15 @@ const (
 	INVALID Level = ""
 )
 
-var levelColors = map[Level]ansii.Color{
-	ERROR:   ansii.RED,
-	WARNING: ansii.YELLOW,
-	NOTICE:  ansii.GREEN,
-	INFO:    ansii.WHITE,
-	DEBUG:   ansii.CYAN,
+var levelColors = map[Level]AnsiiColor{
+	ERROR:   RED,
+	WARNING: YELLOW,
+	NOTICE:  GREEN,
+	INFO:    WHITE,
+	DEBUG:   CYAN,
 }
 
-func AddLevel(level string, color ansii.Color) Level {
+func AddLevel(level string, color AnsiiColor) Level {
 	if level == string(INVALID) {
 		return Level(level)
 	}
@@ -52,7 +50,7 @@ func AddLevel(level string, color ansii.Color) Level {
 	return Level(level)
 }
 
-func ChangeColor(level Level, color ansii.Color) {
+func ChangeColor(level Level, color AnsiiColor) {
 	lvlMu.Lock()
 	defer lvlMu.Unlock()
 	levelColors[level] = color
@@ -71,7 +69,7 @@ func AllLevels() []Level {
 	return levels
 }
 
-func ColorOf(level Level) ansii.Color {
+func ColorOf(level Level) AnsiiColor {
 	lvlMu.Lock()
 	defer lvlMu.Unlock()
 
@@ -80,5 +78,5 @@ func ColorOf(level Level) ansii.Color {
 		return color
 	}
 
-	return ansii.BLACK
+	return BLACK
 }

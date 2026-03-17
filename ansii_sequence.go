@@ -1,4 +1,4 @@
-package ansii
+package log
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 
 const seqPrefix = "\033"
 
-func Sequence(attr Attribute, colors ...Color) string {
+func AnsiiSequence(attr AnsiiAttr, colors ...AnsiiColor) string {
 	colorFields := []string{}
 
 loop:
@@ -36,15 +36,6 @@ loop:
 	)
 }
 
-func Reset() string {
-	return Sequence(Normal)
-}
-
-func Wrap(s string, attr Attribute, colors ...Color) string {
-	return fmt.Sprintf(
-		"%s%s%s",
-		Sequence(attr, colors...),
-		s,
-		Reset(),
-	)
+func ansiiReset() string {
+	return AnsiiSequence(Normal)
 }
