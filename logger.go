@@ -15,7 +15,6 @@ func init() {
 	DefaultLogger = New(
 		"main",
 		WantsAllLevels(),
-		DefaultFormat,
 		DefaultSinks()...,
 	)
 }
@@ -45,22 +44,21 @@ type Logger struct {
 }
 
 // New returns an initialized *Logger.
-func New(name string, wants []Level, format string, sinks ...*Sink) *Logger {
+func New(name string, wants []Level, sinks ...*Sink) *Logger {
 	if wants == nil {
 		wants = []Level{ERROR, WARNING, NOTICE, INFO}
 	}
 
 	if sinks == nil {
-		sinks = []*Sink{}
+		sinks = DefaultSinks()
 	}
 
 	return &Logger{
-		Name:      name,
-		Wants:     wants,
-		Sinks:     sinks,
-		Formatter: format,
-		fmt:       NewFormatter(format),
-		mu:        &sync.Mutex{},
+		Name:  name,
+		Wants: wants,
+		Sinks: sinks,
+		fmt:   NewFormatter(DefaultFormat),
+		mu:    &sync.Mutex{},
 	}
 }
 
@@ -141,7 +139,7 @@ func (logger *Logger) Log(level Level, s ...any) {
 		case Redacter:
 			segments[i] = t.Redacted()
 		default:
-			segments[i] = fmt.Sprintf("%s", p)
+			segments[i] = fmt.Sprintf("%v", p)
 		}
 	}
 
@@ -225,7 +223,6 @@ func (logger *Logger) NewLogger(name string) *Logger {
 	return New(
 		strings.Join([]string{logger.Name, name}, "."),
 		logger.Wants,
-		logger.Formatter,
 		logger.Sinks...,
 	)
 }

@@ -81,3 +81,31 @@ func (s *Sink) SetWants(wants []Level) {
 	}
 	s.wants = wants
 }
+
+func (s *Sink) AddWants(levels ...Level) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	for _, lvl := range levels {
+		if slices.Contains(s.wants, lvl) {
+			continue
+		}
+		s.wants = append(s.wants, lvl)
+	}
+}
+
+func (s *Sink) IsFile(f *os.File) bool {
+	return f.Fd() == s.f.Fd()
+}
+
+func FindSink(f *os.File) *Sink {
+	sinkMu.Lock()
+	defer sinkMu.Unlock()
+
+	for _, sink := range sinks {
+		if sink.f.Fd() == f.Fd() {
+			return sink
+		}
+	}
+
+	return nil
+}

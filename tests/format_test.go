@@ -31,7 +31,7 @@ func TestFormat(t *testing.T) {
 	})
 
 	t.Run("NewFormatter", func(t *testing.T) {
-		l := log.New("testing", log.WantsAllLevels(), log.DebugFormat, log.DefaultSinks()...)
+		l := log.New("testing", log.WantsAllLevels(), log.DefaultSinks()...)
 		fmt := log.NewFormatter(log.DebugFormat)
 		now := time.Now()
 		m := log.Message{

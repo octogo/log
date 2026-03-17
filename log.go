@@ -1,5 +1,9 @@
 package log
 
+func Log(level Level, s ...any) {
+	DefaultLogger.Log(level, s...)
+}
+
 // Println is the drop-in replacement for the builtin's log.Println()
 func Println(s ...any) {
 	DefaultLogger.Println(s...)
