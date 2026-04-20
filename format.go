@@ -9,14 +9,14 @@ import (
 )
 
 var (
-	// DefaultFormat contains the default template-string for formatting log-messages.
-	DefaultFormat = "{{.Date}} {{.Time}} {{.Color}}{{.Logger}}{{.NoColor}} [{{.BoldColor}}{{.Level}}{{.NoColor}}] {{.Message}}"
+	// DefaultFormat mimics the format of the builtin log package.
+	DefaultFormat = "{{.Message}}"
+
+	// LogFormat templates messages for log-files, including a timestamp, the logger and log-level.
+	LogFormat = "{{.Date}} {{.Time}} [{{.BoldColor}}{{.Level}}{{.NoColor}}] {{.Color}}{{.Logger}}{{.NoColor}} {{.Message}}"
 
 	// DebugFormat is an even more verbose format, than the DefaultFormat.
 	DebugFormat = "{{.Date}} {{.Time}}{{.Nano}} {{.BoldColor}}{{.Logger}}{{.NoColor}} {{.Color}}{{.Message}}{{.NoColor}} [{{.File}}:{{.Line}} ({{.Caller}})]"
-
-	// MinimalFormat mimics the format of the builtin log package.
-	MinimalFormat = "{{.Message}}"
 
 	// predefinedNow is a helper for testing with predefined time.Now()
 	predefinedNow *time.Time
