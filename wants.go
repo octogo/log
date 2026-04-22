@@ -53,7 +53,7 @@ func WithSink(path string, wants []Level) *Sink {
 // DefaultSinks returns a []*Sink of the default sinks for STDOUT and STDERR.
 func DefaultSinks() []*Sink {
 	return []*Sink{
-		NewSink(os.Stdout, Wants("DEBUG", "INFO", "NOTICE")),
-		NewSink(os.Stderr, Wants("ERROR", "WARNING")),
+		NewSink(os.Stdout, Wants("INFO")),
+		NewSink(os.Stderr, Wants("DEBUG", "NOTICE", "ERROR", "WARNING")),
 	}
 }
