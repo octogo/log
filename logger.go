@@ -216,13 +216,15 @@ func (logger *Logger) SetSinks(sinks ...*Sink) {
 	logger.Sinks = sinks
 }
 
-// NewLogger returns a new *Logger
+// Spawn returns a new child *Logger.
 // The name of the new logger is automatically be prefixed with
 // fmt.Sprintf("%s.%s", logger.Name, name).
-func (logger *Logger) NewLogger(name string) *Logger {
-	return New(
+func (logger *Logger) Spawn(name string) *Logger {
+	l := New(
 		strings.Join([]string{logger.Name, name}, "."),
 		logger.Wants,
 		logger.Sinks...,
 	)
+	l.SetFormat(logger.Formatter)
+	return l
 }
