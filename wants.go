@@ -35,12 +35,16 @@ func WithSink(path string, wants []Level) *Sink {
 	}
 
 	switch path {
+	// The standard streams are passed through as themselves rather than
+	// re-wrapped. os.NewFile on the same descriptor yields a second handle to
+	// the same stream, and sinks are identified by handle — so wrapping would
+	// build a second stdout sink beside the one every Logger already shares,
+	// writing each line twice and invisible to FindSink(os.Stdout), which is how
+	// AddLevel reaches it.
 	case os.Stdout.Name():
-		f := os.NewFile(os.Stdout.Fd(), os.Stdout.Name())
-		return NewSink(f, wants)
+		return NewSink(os.Stdout, wants)
 	case os.Stderr.Name():
-		f := os.NewFile(os.Stderr.Fd(), os.Stderr.Name())
-		return NewSink(f, wants)
+		return NewSink(os.Stderr, wants)
 	default:
 		f, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0640)
 		if err != nil {

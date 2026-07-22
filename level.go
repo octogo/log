@@ -40,8 +40,16 @@ func AddLevel(level string, color AnsiiColor) Level {
 		}
 	}
 
-	// always add level to STDOUT sink
-	FindSink(os.Stdout).AddWants(Level(level))
+	// always add level to STDOUT sink, if one has been registered.
+	//
+	// It normally has been, since package initialisation builds DefaultLogger
+	// over DefaultSinks. The guard is here because the alternative is a nil
+	// dereference in a function whose whole job is registering a log level —
+	// failing, loudly and fatally, at the moment a program is trying to
+	// configure how it reports things.
+	if stdout := FindSink(os.Stdout); stdout != nil {
+		stdout.AddWants(Level(level))
+	}
 
 	// always add to DefaultLogger
 	DefaultLogger.Wants = append(DefaultLogger.Wants, Level(level))
