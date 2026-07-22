@@ -53,12 +53,19 @@ func New(name string, wants []Level, sinks ...*Sink) *Logger {
 		sinks = DefaultSinks()
 	}
 
+	// Formatter and fmt must be set together, always. Formatter is the exported
+	// record of which template this logger uses, and Spawn passes it to the
+	// child's SetFormat; leaving it empty here while fmt is populated makes a
+	// logger that renders correctly itself and produces children that render
+	// nothing at all — SetFormat("") compiles an empty template, which is valid
+	// and emits the empty string for every line.
 	return &Logger{
-		Name:  name,
-		Wants: wants,
-		Sinks: sinks,
-		fmt:   NewFormatter(DefaultFormat),
-		mu:    &sync.Mutex{},
+		Name:      name,
+		Wants:     wants,
+		Sinks:     sinks,
+		Formatter: DefaultFormat,
+		fmt:       NewFormatter(DefaultFormat),
+		mu:        &sync.Mutex{},
 	}
 }
 

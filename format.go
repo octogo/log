@@ -3,10 +3,22 @@ package log
 import (
 	"bytes"
 	"fmt"
-	"html/template"
 	"os"
+	"text/template"
 	"time"
 )
+
+// Log lines are rendered with text/template, not html/template.
+//
+// html/template escapes for an HTML output context, which turns every quote,
+// angle bracket and ampersand in a message into an entity: a line logged with
+// %q arrives as &#34;value&#34;, and an apostrophe as &#39;. That is wrong for
+// every sink this package writes to — a terminal, a log file — and it corrupts
+// exactly the messages that were quoted because their precise text mattered.
+//
+// A sink that did render into a web page would need escaping applied there, in
+// the context that requires it, rather than in the formatter shared by all
+// sinks.
 
 var (
 	// DefaultFormat mimics the format of the builtin log package.
