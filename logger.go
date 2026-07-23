@@ -154,11 +154,25 @@ func (logger *Logger) Log(level Level, s ...any) {
 		Timestamp: time.Now(),
 		Logger:    logger,
 		Level:     level,
-		Msg:       strings.Join(segments, " "),
 	}
 
+	// A single logical message may still carry embedded newlines — a multi-line
+	// value handed straight in, or text a caller assembled line by line. Rendered
+	// as one Message the formatter prefixes only the first line and leaves the
+	// rest hanging in the output with no timestamp, no level and no alignment to
+	// anything around them. Split it and format each line as its own record, all
+	// sharing the one timestamp so they still read as the single event they came
+	// from. A lone trailing newline is a terminator, not an empty final line, and
+	// is dropped; blank lines within the text are preserved.
+	lines := strings.Split(strings.TrimSuffix(strings.Join(segments, " "), "\n"), "\n")
+
 	for _, sink := range logger.Sinks {
-		if sink.Wants(level) {
+		if !sink.Wants(level) {
+			continue
+		}
+
+		for _, line := range lines {
+			msg.Msg = line
 			logger.log(sink, msg)
 		}
 	}

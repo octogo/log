@@ -128,6 +128,43 @@ func TestMessagesAreNotHtmlEscaped(t *testing.T) {
 	}
 }
 
+// TestMultilineMessagesAreSplit covers embedded newlines in a single log call.
+//
+// A message carrying newlines — a multi-line value, or several lines assembled
+// into one string — must format as one record per line, each with the same
+// prefix. Rendered as a single Message the formatter prefixes only the first
+// line and leaves the rest dangling with no timestamp and no level, the
+// misalignment that makes multi-line output unreadable in a log.
+//
+// The cases also pin the edges: a lone trailing newline is a terminator and is
+// dropped rather than emitting a prefixed blank line, while a blank line inside
+// the text is a line and is kept.
+func TestMultilineMessagesAreSplit(t *testing.T) {
+	for _, tc := range []struct {
+		name string
+		msg  string
+		want string
+	}{
+		{"three lines", "first\nsecond\nthird", "[INFO] first\n[INFO] second\n[INFO] third\n"},
+		{"trailing newline dropped", "only\n", "[INFO] only\n"},
+		{"single line unchanged", "plain", "[INFO] plain\n"},
+		{"interior blank kept", "a\n\nb", "[INFO] a\n[INFO] \n[INFO] b\n"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			sink, captured := captureSink(t)
+
+			logger := New("test", AllLevels(), sink)
+			logger.SetFormat("[{{.Level}}] {{.Message}}")
+
+			logger.Printf("%s", tc.msg)
+
+			if out := captured(); out != tc.want {
+				t.Errorf("multi-line message not split per line\n got: %q\nwant: %q", out, tc.want)
+			}
+		})
+	}
+}
+
 // TestSinkIsNotReusedAcrossFiles is the log-rotation bug.
 //
 // Descriptor numbers are unique only among descriptors currently open. Close a
