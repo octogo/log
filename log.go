@@ -1,44 +1,65 @@
 package log
 
-import (
-	"github.com/octogo/log/pkg/level"
-	"github.com/octogo/log/pkg/log"
-)
-
-// New returns an initialized Logger with the given name.
-// If a Logger with the given name has already been registered, then that
-// Logger will be returned instead of initializing dupicate Loggers with the
-// same name. This also ensures that the LID of a logger will always increase.
-func New(name string, wants []level.Level, outputs ...string) *log.Logger {
-	return log.NewLogger(name, wants, outputs...)
+func Log(level Level, s ...any) {
+	DefaultLogger.Log(level, s...)
 }
 
-// Println logs the given value with log-level INFO.
-func Println(v interface{}) {
-	log.Println(v)
+// Println is the drop-in replacement for the builtin's log.Println()
+func Println(s ...any) {
+	DefaultLogger.Println(s...)
 }
 
-// Printf wraps Println and supports string formatting.
-func Printf(f string, args ...interface{}) {
-	log.Printf(f, args...)
+// Printf is the drop-in replacement for the builtin's log.Printf()
+func Printf(p string, s ...any) {
+	DefaultLogger.Printf(p, s...)
 }
 
-// Log is an alias for Println.
-func Log(v interface{}) {
-	log.Println(v)
+// Fatal is the drop-in replacement for the builtin's log.Fatal()
+func Fatal(s ...any) {
+	DefaultLogger.Fatal(s...)
 }
 
-// Logf is an alias for Printf.
-func Logf(f string, args ...interface{}) {
-	log.Printf(f, args...)
+// Fatalf is the drop-in replacement for the builtin's log.Fatalf()
+func Fatalf(p string, s ...any) {
+	DefaultLogger.Fatalf(p, s...)
 }
 
-// Fatal logs the given value with log-level ERROR and exits with RC-1.
-func Fatal(v interface{}) {
-	log.Fatal(v)
+// Debug works like Println, but writes the message with log-level DEBUG.
+func Debug(s ...any) {
+	DefaultLogger.Debug(s...)
 }
 
-// Fatalf wraps Fatal() and supports string formatting.
-func Fatalf(f string, args ...interface{}) {
-	log.Fatalf(f, args...)
+// Debugf works like Printf, but writes the message with log-level DEBUG.
+func Debugf(p string, s ...any) {
+	DefaultLogger.Debugf(p, s...)
+}
+
+// Notice works like Println, but writes the message with log-level NOTICE.
+func Notice(s ...any) {
+	DefaultLogger.Notice(s...)
+}
+
+// Noticef works like Printf, but writes the message with log-level NOTICE.
+func Noticef(p string, s ...any) {
+	DefaultLogger.Noticef(p, s...)
+}
+
+// Warning works like Println, but writes the message with log-level WARNING.
+func Warning(s ...any) {
+	DefaultLogger.Warning(s...)
+}
+
+// Warningf works like Printf, but writes the message with log-level WARNING.
+func Warningf(p string, s ...any) {
+	DefaultLogger.Warningf(p, s...)
+}
+
+// Error works like Println, but writes the message with log-level ERROR.
+func Error(s ...any) {
+	DefaultLogger.Error(s...)
+}
+
+// Errorf works like Printlf, but writes the message with log-level ERROR.
+func Errorf(p string, s ...any) {
+	DefaultLogger.Errorf(p, s...)
 }

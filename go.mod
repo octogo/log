@@ -1,9 +1,7 @@
-module github.com/octogo/log
+module github.com/octogo/log/v2
 
-go 1.12
+go 1.25.0
 
-require (
-	github.com/jinzhu/configor v1.1.1
-	github.com/urfave/cli v1.22.1
-	golang.org/x/sys v0.0.0-20191010194322-b09406accb47
-)
+require golang.org/x/term v0.41.0
+
+require golang.org/x/sys v0.42.0 // indirect
